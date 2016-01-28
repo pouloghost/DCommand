@@ -6,8 +6,10 @@ import java.io.File;
 
 import dalvik.system.DexClassLoader;
 import gt.research.dc.core.AbsCommand;
+import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.core.constant.FileConstants;
 import gt.research.dc.data.ApkInfo;
+import gt.research.dc.data.CommandContext;
 import gt.research.dc.util.FileUtils;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.NetUtils;
@@ -60,8 +62,12 @@ public class CommandManager {
                                 cacheDir.getAbsolutePath(), null, context.getClassLoader());
                         try {
                             T command = (T) dexClassLoader.loadClass(info.getImplement(intf.getName())).newInstance();
-                            //// TODO: 2016/1/27
-                            command.setContext(null);
+
+                            CommandContext commandContext = new CommandContext();
+                            commandContext.classLoader = dexClassLoader;
+                            commandContext.apkInfo = new ApkInfo(info);
+                            command.setContext(commandContext);
+
                             listener.onCommandLoaded(command);
                         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                             LogUtils.exception(e);
@@ -70,7 +76,7 @@ public class CommandManager {
                         }
                     }
                 };
-                if (!apkFile.exists()) {
+                if (!info.isLatest || !apkFile.exists()) {
                     downloadApk(context, info, apkFile, afterLoad);
                     return;
                 }

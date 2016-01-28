@@ -9,7 +9,20 @@ public class ApkInfo {
     public String version;
     public String url;
     public String id;
+    public boolean isLatest;
     public HashMap<String, String> interfaces;
+
+    public ApkInfo() {
+
+    }
+
+    public ApkInfo(ApkInfo src) {
+        version = src.version;
+        url = src.url;
+        id = src.id;
+        isLatest = src.isLatest;
+        interfaces = new HashMap<>(src.interfaces);
+    }
 
     public boolean containsImplement(String intf) {
         return interfaces.containsKey(intf);

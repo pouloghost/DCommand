@@ -12,6 +12,7 @@ public class Apk {
     private String version;
     /** Not-null value. */
     private String url;
+    private boolean latest;
 
     public Apk() {
     }
@@ -20,10 +21,11 @@ public class Apk {
         this.id = id;
     }
 
-    public Apk(String id, String version, String url) {
+    public Apk(String id, String version, String url, boolean latest) {
         this.id = id;
         this.version = version;
         this.url = url;
+        this.latest = latest;
     }
 
     /** Not-null value. */
@@ -54,6 +56,14 @@ public class Apk {
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public boolean getLatest() {
+        return latest;
+    }
+
+    public void setLatest(boolean latest) {
+        this.latest = latest;
     }
 
 }

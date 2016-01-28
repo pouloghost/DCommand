@@ -20,6 +20,7 @@ public class Generator {
         apk.addStringProperty("id").notNull().primaryKey().index();
         apk.addStringProperty("version").notNull();
         apk.addStringProperty("url").notNull();
+        apk.addBooleanProperty("latest").notNull();
     }
 
     private static void addIntf(Schema schema){

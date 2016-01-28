@@ -1,19 +1,16 @@
-package gt.research.dc.core.manager;
+package gt.research.dc.core.config;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.alibaba.fastjson.JSON;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import gt.research.dc.core.config.fetcher.IConfigFetcher;
+import gt.research.dc.core.config.fetcher.NetFileFetcher;
+import gt.research.dc.core.config.fetcher.OnConfigFetchedListener;
 import gt.research.dc.core.constant.DBConstants;
 import gt.research.dc.core.db.Apk;
 import gt.research.dc.core.db.ApkDao;
@@ -23,7 +20,7 @@ import gt.research.dc.core.db.Intf;
 import gt.research.dc.core.db.IntfDao;
 import gt.research.dc.data.ApkInfo;
 import gt.research.dc.util.LogUtils;
-import gt.research.dc.util.NetUtils;
+import gt.research.dc.util.VersionUtils;
 
 /**
  * Created by ayi.zty on 2016/1/26.
@@ -32,6 +29,7 @@ public class ConfigManager {
     private volatile static ConfigManager sInstance;
 
     private HashMap<String, ApkInfo> mInterfaceIndex;
+    private IConfigFetcher mFetcher;
 
     private ConfigManager() {
 
@@ -82,6 +80,7 @@ public class ConfigManager {
             apkInfo.id = apk.getId();
             apkInfo.version = apk.getVersion();
             apkInfo.url = apk.getUrl();
+            apkInfo.isLatest = apk.getLatest();
             apkInfos.put(apkInfo.id, apkInfo);
         }
 
@@ -106,52 +105,30 @@ public class ConfigManager {
     }
 
     public void updateConfig(Context context, final Runnable afterLoad) {
-        NetUtils.download(context, "https://os.alipayobjects.com/rmsportal/levEFbWxKrptmkb.json",
-                new NetUtils.DownloadListener() {
-                    @Override
-                    public void onEnqueue(String url) {
-                        LogUtils.debug("enqueue");
-                    }
-
-                    @Override
-                    public void onFinish(String url, String file) {
-                        onFileGot(file);
-                    }
-
-                    @Override
-                    public void onCached(String url, String file) {
-                        onFileGot(file);
-                    }
-
-                    private void onFileGot(String file) {
-                        LogUtils.debug(file);
-                        File config = new File(file);
-                        if (!config.exists()) {
-                            return;
-                        }
-                        readConfigFromFile(config);
-                        if (null != afterLoad) {
-                            afterLoad.run();
+        if (null == mFetcher) {
+            mFetcher = new NetFileFetcher();
+        }
+        mFetcher.fetch(context, new OnConfigFetchedListener() {
+            @Override
+            public void onConfigFetched(List<ApkInfo> apkInfos) {
+                if (null != apkInfos) {
+                    mInterfaceIndex = new HashMap<>();
+                    for (ApkInfo apkInfo : apkInfos) {
+                        for (String intf : apkInfo.interfaces.keySet()) {
+                            mInterfaceIndex.put(intf, apkInfo);
                         }
                     }
-                });
-    }
-
-    private void readConfigFromFile(File config) {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(config));
-            String json = reader.readLine();
-            List<ApkInfo> apkInfos = JSON.parseArray(json, ApkInfo.class);
-            mInterfaceIndex = new HashMap<>();
-            for (ApkInfo apkInfo : apkInfos) {
-                for (String intf : apkInfo.interfaces.keySet()) {
-                    mInterfaceIndex.put(intf, apkInfo);
+                    LogUtils.debug(apkInfos.get(0).id);
+                }
+                if (null != afterLoad) {
+                    afterLoad.run();
                 }
             }
-            LogUtils.debug(apkInfos.get(0).id);
-        } catch (IOException e) {
-            LogUtils.exception(e);
-        }
+        });
+    }
+
+    public void setConfigFetcher(IConfigFetcher fetcher) {
+        mFetcher = fetcher;
     }
 
     private void saveConfigToDb(Context context) {
@@ -171,7 +148,10 @@ public class ConfigManager {
         }
 
         for (ApkInfo apkInfo : apkInfos) {
-            Apk apk = new Apk(apkInfo.id, apkInfo.version, apkInfo.url);
+            Apk old = apkDao.load(apkInfo.id);
+            boolean isLatest = null != old &&
+                    (VersionUtils.isLatest(old.getVersion(), apkInfo.version) && old.getLatest());
+            Apk apk = new Apk(apkInfo.id, apkInfo.version, apkInfo.url, isLatest);
             apkDao.insertOrReplace(apk);
         }
     }
