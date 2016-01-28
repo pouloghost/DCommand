@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import gt.research.core.db.Apk;
 import gt.research.core.db.ApkDao;
@@ -65,8 +66,34 @@ public class ConfigManager {
         afterLoad.run();
     }
 
-    public void loadLocalConfig() {
+    public void loadLocalConfig(Context context) {
+        mInterfaceIndex = null;
+        SQLiteOpenHelper helper = new DaoMaster.DevOpenHelper(context, DBConstants.DB_FILE_CONFIG, null);
+        DaoMaster daoMaster = new DaoMaster(helper.getReadableDatabase());
+        DaoSession session = daoMaster.newSession();
+        ApkDao apkDao = session.getApkDao();
+        IntfDao intfDao = session.getIntfDao();
 
+        List<Apk> apks = apkDao.loadAll();
+        Map<String, ApkInfo> apkInfos = new HashMap<>();
+        for (Apk apk : apks) {
+            ApkInfo apkInfo = new ApkInfo();
+            apkInfo.interfaces = new HashMap<>();
+            apkInfo.id = apk.getId();
+            apkInfo.version = apk.getVersion();
+            apkInfo.url = apk.getUrl();
+            apkInfos.put(apkInfo.id, apkInfo);
+        }
+
+        List<Intf> intfs = intfDao.loadAll();
+        mInterfaceIndex = new HashMap<>();
+        for (Intf intf : intfs) {
+            ApkInfo apkInfo = apkInfos.get(intf.getApk());
+            if (null != apkInfo) {
+                apkInfo.interfaces.put(intf.getIntf(), intf.getImpl());
+                mInterfaceIndex.put(intf.getIntf(), apkInfo);
+            }
+        }
     }
 
     public void updateLocalConfig(final Context context) {

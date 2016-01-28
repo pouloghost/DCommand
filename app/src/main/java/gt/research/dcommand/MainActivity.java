@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.updateConfig).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ConfigManager.getInstance().updateLocalConfig(MainActivity.this);
+                ConfigManager.getInstance().loadLocalConfig(MainActivity.this);
             }
         });
     }
