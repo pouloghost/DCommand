@@ -39,10 +39,20 @@ public class NetFileFetcher implements IConfigFetcher {
                         onFileGot(file);
                     }
 
+                    @Override
+                    public void onFail() {
+                        listener.onConfigFetched(null);
+                    }
+
                     private void onFileGot(String file) {
+                        if (null == file) {
+                            listener.onConfigFetched(null);
+                            return;
+                        }
                         LogUtils.debug(file);
                         File config = new File(file);
                         if (!config.exists()) {
+                            listener.onConfigFetched(null);
                             return;
                         }
                         List<ApkInfo> apkInfos = readConfigFromFile(config);

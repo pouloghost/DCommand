@@ -101,6 +101,13 @@ public class CommandManager {
             public void onCached(String url, String file) {
                 onFileGot(file, apkFile, afterLoad);
             }
+
+            @Override
+            public void onFail() {
+                if (null != afterLoad) {
+                    afterLoad.run();
+                }
+            }
         });
     }
 

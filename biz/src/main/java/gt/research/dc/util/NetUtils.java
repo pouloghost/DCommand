@@ -36,7 +36,11 @@ public class NetUtils {
                     long receivedRef = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
                     if (ref == receivedRef) {
                         Uri uri = manager.getUriForDownloadedFile(receivedRef);
-                        listener.onFinish(url, uri.getPath());
+                        if (null == uri) {
+                            listener.onFail();
+                        } else {
+                            listener.onFinish(url, uri.getPath());
+                        }
                         context.unregisterReceiver(this);
                     }
                 }
@@ -63,5 +67,7 @@ public class NetUtils {
         void onFinish(String url, String file);
 
         void onCached(String url, String file);
+
+        void onFail();
     }
 }
