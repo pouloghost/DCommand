@@ -24,4 +24,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile files('libs/fastjson-1.1.46.android.jar')
     compile project(':api')
+    compile 'de.greenrobot:greendao:2.0.0'
 }

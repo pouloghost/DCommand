@@ -1,6 +1,7 @@
 package gt.research.core;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.alibaba.fastjson.JSON;
 
@@ -9,8 +10,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
+import gt.research.core.db.Apk;
+import gt.research.core.db.ApkDao;
+import gt.research.core.db.DaoMaster;
+import gt.research.core.db.DaoSession;
+import gt.research.core.db.Intf;
+import gt.research.core.db.IntfDao;
+import gt.research.dc.core.DBConstants;
 import gt.research.dc.data.ApkInfo;
 import gt.research.util.LogUtils;
 import gt.research.util.NetUtils;
@@ -60,6 +69,15 @@ public class ConfigManager {
 
     }
 
+    public void updateLocalConfig(final Context context) {
+        updateConfig(context, new Runnable() {
+            @Override
+            public void run() {
+                saveConfigToDb(context);
+            }
+        });
+    }
+
     public void updateConfig(Context context, final Runnable afterLoad) {
         NetUtils.download(context, "https://os.alipayobjects.com/rmsportal/levEFbWxKrptmkb.json",
                 new NetUtils.DownloadListener() {
@@ -106,6 +124,28 @@ public class ConfigManager {
             LogUtils.debug(apkInfos.get(0).id);
         } catch (IOException e) {
             LogUtils.exception(e);
+        }
+    }
+
+    private void saveConfigToDb(Context context) {
+        SQLiteOpenHelper helper = new DaoMaster.DevOpenHelper(context, DBConstants.DB_FILE_CONFIG, null);
+        DaoMaster daoMaster = new DaoMaster(helper.getReadableDatabase());
+        DaoSession session = daoMaster.newSession();
+        ApkDao apkDao = session.getApkDao();
+        IntfDao intfDao = session.getIntfDao();
+
+        HashSet<ApkInfo> apkInfos = new HashSet<>();
+
+        for (String intf : mInterfaceIndex.keySet()) {
+            ApkInfo apkInfo = mInterfaceIndex.get(intf);
+            apkInfos.add(apkInfo);
+            Intf intfEntity = new Intf(intf, apkInfo.getImplement(intf), apkInfo.id);
+            intfDao.insertOrReplace(intfEntity);
+        }
+
+        for (ApkInfo apkInfo : apkInfos) {
+            Apk apk = new Apk(apkInfo.id, apkInfo.version, apkInfo.url);
+            apkDao.insertOrReplace(apk);
         }
     }
 

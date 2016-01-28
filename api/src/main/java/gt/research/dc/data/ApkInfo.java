@@ -14,8 +14,14 @@ public class ApkInfo {
     public boolean containsImplement(String intf) {
         return interfaces.containsKey(intf);
     }
-    public String getImplement(String intf){
+
+    public String getImplement(String intf) {
         return interfaces.get(intf);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
 
