@@ -1,4 +1,4 @@
-package gt.research.util;
+package gt.research.dc.util;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;

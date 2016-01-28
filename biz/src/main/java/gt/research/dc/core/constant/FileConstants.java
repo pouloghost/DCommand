@@ -1,4 +1,4 @@
-package gt.research.dc.core;
+package gt.research.dc.core.constant;
 
 /**
  * Created by ayi.zty on 2016/1/25.

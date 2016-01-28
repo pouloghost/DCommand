@@ -1,4 +1,4 @@
-package gt.research.core;
+package gt.research.dc.core.manager;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -14,16 +14,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import gt.research.core.db.Apk;
-import gt.research.core.db.ApkDao;
-import gt.research.core.db.DaoMaster;
-import gt.research.core.db.DaoSession;
-import gt.research.core.db.Intf;
-import gt.research.core.db.IntfDao;
-import gt.research.dc.core.DBConstants;
+import gt.research.dc.core.constant.DBConstants;
+import gt.research.dc.core.db.Apk;
+import gt.research.dc.core.db.ApkDao;
+import gt.research.dc.core.db.DaoMaster;
+import gt.research.dc.core.db.DaoSession;
+import gt.research.dc.core.db.Intf;
+import gt.research.dc.core.db.IntfDao;
 import gt.research.dc.data.ApkInfo;
-import gt.research.util.LogUtils;
-import gt.research.util.NetUtils;
+import gt.research.dc.util.LogUtils;
+import gt.research.dc.util.NetUtils;
 
 /**
  * Created by ayi.zty on 2016/1/26.

@@ -1,4 +1,4 @@
-package gt.research.core;
+package gt.research.dc.core.manager;
 
 import android.content.Context;
 
@@ -6,11 +6,11 @@ import java.io.File;
 
 import dalvik.system.DexClassLoader;
 import gt.research.dc.core.AbsCommand;
-import gt.research.dc.core.FileConstants;
+import gt.research.dc.core.constant.FileConstants;
 import gt.research.dc.data.ApkInfo;
-import gt.research.util.FileUtils;
-import gt.research.util.LogUtils;
-import gt.research.util.NetUtils;
+import gt.research.dc.util.FileUtils;
+import gt.research.dc.util.LogUtils;
+import gt.research.dc.util.NetUtils;
 
 /**
  * Created by ayi.zty on 2016/1/26.

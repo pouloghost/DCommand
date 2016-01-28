@@ -5,8 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import gt.research.core.CommandManager;
-import gt.research.core.ConfigManager;
+import gt.research.dc.core.manager.CommandManager;
+import gt.research.dc.core.manager.ConfigManager;
 import gt.research.dc.core.IVersion;
 
 public class MainActivity extends AppCompatActivity {

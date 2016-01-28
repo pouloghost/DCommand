@@ -1,4 +1,4 @@
-package gt.research.util;
+package gt.research.dc.util;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import gt.research.dc.core.FileConstants;
+import gt.research.dc.core.constant.FileConstants;
 import gt.research.dc.data.ApkInfo;
 
 /**
