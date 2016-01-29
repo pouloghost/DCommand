@@ -8,9 +8,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
-import gt.research.dc.data.ApkInfo;
+import gt.research.dc.data.Config;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.NetUtils;
 
@@ -31,11 +30,13 @@ public class NetFileFetcher implements IConfigFetcher {
 
                     @Override
                     public void onFinish(String url, String file) {
+                        LogUtils.debug("finish");
                         onFileGot(file);
                     }
 
                     @Override
                     public void onCached(String url, String file) {
+                        LogUtils.debug("cached");
                         onFileGot(file);
                     }
 
@@ -55,9 +56,9 @@ public class NetFileFetcher implements IConfigFetcher {
                             listener.onConfigFetched(null);
                             return;
                         }
-                        List<ApkInfo> apkInfos = readConfigFromFile(config);
+                        Config configEntity = readConfigFromFile(config);
                         if (null != listener) {
-                            listener.onConfigFetched(apkInfos);
+                            listener.onConfigFetched(configEntity);
                         }
                     }
                 });
@@ -67,11 +68,11 @@ public class NetFileFetcher implements IConfigFetcher {
         mUrl = url;
     }
 
-    private List<ApkInfo> readConfigFromFile(File config) {
+    private Config readConfigFromFile(File config) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(config));
             String json = reader.readLine();
-            return JSON.parseArray(json, ApkInfo.class);
+            return JSON.parseObject(json, Config.class);
         } catch (IOException e) {
             LogUtils.exception(e);
             return null;

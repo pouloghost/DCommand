@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import de.greenrobot.dao.query.DeleteQuery;
+import de.greenrobot.dao.query.QueryBuilder;
+import de.greenrobot.dao.query.WhereCondition;
 import gt.research.dc.core.config.fetcher.IConfigFetcher;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
 import gt.research.dc.core.config.fetcher.OnConfigFetchedListener;
@@ -19,6 +22,8 @@ import gt.research.dc.core.db.DaoSession;
 import gt.research.dc.core.db.Intf;
 import gt.research.dc.core.db.IntfDao;
 import gt.research.dc.data.ApkInfo;
+import gt.research.dc.data.Config;
+import gt.research.dc.util.FileUtils;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.VersionUtils;
 
@@ -30,6 +35,7 @@ public class ConfigManager {
 
     private HashMap<String, ApkInfo> mInterfaceIndex;
     private IConfigFetcher mFetcher;
+    private List<String> mApkToDelete;
 
     private ConfigManager() {
 
@@ -110,7 +116,11 @@ public class ConfigManager {
         }
         mFetcher.fetch(context, new OnConfigFetchedListener() {
             @Override
-            public void onConfigFetched(List<ApkInfo> apkInfos) {
+            public void onConfigFetched(Config config) {
+                if (null == config) {
+                    return;
+                }
+                List<ApkInfo> apkInfos = config.update;
                 if (null != apkInfos) {
                     mInterfaceIndex = new HashMap<>();
                     for (ApkInfo apkInfo : apkInfos) {
@@ -119,6 +129,9 @@ public class ConfigManager {
                         }
                     }
                     LogUtils.debug(apkInfos.get(0).id);
+                }
+                if (null != config.delete) {
+                    mApkToDelete = config.delete;
                 }
                 if (null != afterLoad) {
                     afterLoad.run();
@@ -138,6 +151,13 @@ public class ConfigManager {
         ApkDao apkDao = session.getApkDao();
         IntfDao intfDao = session.getIntfDao();
 
+        deleteDb(context, apkDao, intfDao);
+        updateDb(apkDao, intfDao);
+
+        session.clear();
+    }
+
+    private void updateDb(ApkDao apkDao, IntfDao intfDao) {
         HashSet<ApkInfo> apkInfos = new HashSet<>();
 
         for (String intf : mInterfaceIndex.keySet()) {
@@ -153,6 +173,19 @@ public class ConfigManager {
                     (VersionUtils.isLatest(old.getVersion(), apkInfo.version) && old.getLatest());
             Apk apk = new Apk(apkInfo.id, apkInfo.version, apkInfo.url, isLatest);
             apkDao.insertOrReplace(apk);
+        }
+    }
+
+    private void deleteDb(Context context, ApkDao apkDao, IntfDao intfDao) {
+        for (String id : mApkToDelete) {
+            apkDao.deleteByKey(id);
+
+            QueryBuilder queryBuilder = intfDao.queryBuilder();
+            queryBuilder.where(new WhereCondition.StringCondition("APK = '" + id + "'"));
+            DeleteQuery delete = queryBuilder.buildDelete();
+            delete.executeDeleteWithoutDetachingEntities();
+
+            FileUtils.deleteApk(context, id);
         }
     }
 

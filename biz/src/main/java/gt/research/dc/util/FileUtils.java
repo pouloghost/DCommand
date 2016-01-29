@@ -10,23 +10,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import gt.research.dc.core.constant.FileConstants;
-import gt.research.dc.data.ApkInfo;
 
 /**
  * Created by ayi.zty on 2016/1/25.
  */
 public class FileUtils {
-    public static void deleteApk(Context context, ApkInfo info) {
+    public static void deleteApk(Context context, String id) {
         File dir = context.getDir(FileConstants.DIR_DOWNLOAD, Context.MODE_PRIVATE);
         if (!dir.exists()) {
             return;
         }
-        File apk = new File(dir, info.id + FileConstants.SUFFIX_APK);
+        File apk = new File(dir, id + FileConstants.SUFFIX_APK);
         if (!apk.exists()) {
             return;
         }
         apk.delete();
-        File dex = new File(dir, info.id + FileConstants.SUFFIX_DEX);
+        File dex = new File(dir, id + FileConstants.SUFFIX_DEX);
         if (!dex.exists()) {
             return;
         }
