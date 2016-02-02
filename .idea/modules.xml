@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/biz/biz.iml" filepath="$PROJECT_DIR$/biz/biz.iml" />
       <module fileurl="file://$PROJECT_DIR$/dbgen/dbgen.iml" filepath="$PROJECT_DIR$/dbgen/dbgen.iml" />
       <module fileurl="file://$PROJECT_DIR$/export/export.iml" filepath="$PROJECT_DIR$/export/export.iml" />
+      <module fileurl="file://$PROJECT_DIR$/thirdparty/thirdparty.iml" filepath="$PROJECT_DIR$/thirdparty/thirdparty.iml" />
     </modules>
   </component>
 </project>

@@ -1,1 +1,1 @@
-include ':app', ':export', ':api', ':biz', ':dbgen'
+include ':app', ':export', ':api', ':biz', ':dbgen', ':thirdparty'
