@@ -23,7 +23,6 @@
 package org.apache.harmony.security.asn1;
 
 import java.io.IOException;
-import libcore.util.EmptyArray;
 
 /**
  * This class represents ASN.1 Bitstring type.
@@ -98,7 +97,7 @@ public class ASN1BitString extends ASN1StringType {
      */
     public static class ASN1NamedBitList extends ASN1BitString {
         private static final byte[] SET_MASK = { (byte) 128, 64, 32, 16, 8, 4, 2, 1};
-        private static final BitString emptyString = new BitString(EmptyArray.BYTE, 0);
+        private static final BitString emptyString = new BitString(new byte[0], 0);
         private static final int INDEFINITE_SIZE = -1;
 
         private final int minBits;

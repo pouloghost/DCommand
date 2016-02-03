@@ -71,7 +71,16 @@ public class OriginalVerifier implements IApkVerifier {
                 }
                 normalFiles.add(entry);
             }
-            boolean isCertOk = verifyCertificate(certRsas, certSfs, manifest);
+            if (!verifyCertificate(certRsas, certSfs, manifest)) {
+                if (null != listener) {
+                    listener.onVerified(false);
+                }
+                return;
+            }
+            //// TODO: 2016/2/2 PackageParser:1094 JarVerifier:195
+            //// TODO: 2016/2/3 verify entries with manifest
+            ManifestReader manifestReader = new ManifestReader(manifest);
+            Map<String, Chunk> chunks = manifestReader.getChunks();
             for (JarEntry entry : normalFiles) {
 
             }
