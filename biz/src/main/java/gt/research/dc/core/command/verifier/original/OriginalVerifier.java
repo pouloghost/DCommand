@@ -49,12 +49,12 @@ public class OriginalVerifier implements IApkVerifier {
             ReflectUtils.invokeMethod(packageParser, "collectCertificates",
                     new Class[]{packageClass, int.class}, new Object[]{pkg, parseFlag});
             Set<String> pubKeys = convertToPubKey((Signature[]) ReflectUtils.getFieldValue(pkg, "mSignatures"));
-            if (pubKeys.size() != localKey.size()) {
+            if (null == pubKeys || pubKeys.size() != localKey.size()) {
                 return false;
             }
             return pubKeys.containsAll(localKey);
-        } catch (Exception e) {
-            LogUtils.exception(e);
+        } catch (Throwable throwable) {
+            LogUtils.exception(throwable);
             return false;
         }
     }
@@ -71,6 +71,9 @@ public class OriginalVerifier implements IApkVerifier {
     }
 
     private Set<String> convertToPubKey(Signature[] signatures) {
+        if (null == signatures) {
+            return null;
+        }
         Set<String> result = new HashSet<>(signatures.length);
         try {
             CertificateFactory certFactory = CertificateFactory

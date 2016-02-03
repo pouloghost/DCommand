@@ -1,6 +1,7 @@
 package gt.research.dc.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -13,56 +14,64 @@ public class ReflectUtils {
             Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
             return field.get(object);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
             LogUtils.exception(e);
         }
         return null;
     }
 
-    public static Object invokeMethod(Object object, String methodName) {
+    public static Object invokeMethod(Object object, String methodName) throws Throwable {
         try {
             Class<?> clazz = object.getClass();
             Method method = clazz.getDeclaredMethod(methodName);
             method.setAccessible(true);
             return method.invoke(object);
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException e) {
             LogUtils.exception(e);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
         }
         return null;
     }
 
-    public static Object invokeMethod(Object object, String methodName, Class[] argsClass, Object[] args) {
+    public static Object invokeMethod(Object object, String methodName, Class[] argsClass, Object[] args) throws Throwable {
         try {
             Class<?> clazz = object.getClass();
             Method method = clazz.getDeclaredMethod(methodName, argsClass);
             method.setAccessible(true);
             return method.invoke(object, args);
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException e) {
             LogUtils.exception(e);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
         }
         return null;
     }
 
-    public static Object invokeStaticMethod(String className, String methodName) {
+    public static Object invokeStaticMethod(String className, String methodName) throws Throwable {
         try {
             Class<?> clazz = Class.forName(className);
             Method method = clazz.getDeclaredMethod(methodName);
             method.setAccessible(true);
             return method.invoke(null);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException e) {
             LogUtils.exception(e);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
         }
         return null;
     }
 
-    public static Object invokeStaticMethod(String className, String methodName, Class[] argsClass, Object[] args) {
+    public static Object invokeStaticMethod(String className, String methodName, Class[] argsClass, Object[] args) throws Throwable {
         try {
             Class<?> clazz = Class.forName(className);
             Method method = clazz.getDeclaredMethod(methodName, argsClass);
             method.setAccessible(true);
             return method.invoke(null, args);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException e) {
             LogUtils.exception(e);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
         }
         return null;
     }
