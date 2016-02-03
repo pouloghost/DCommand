@@ -38,7 +38,7 @@ public class ConfigManager {
     private List<String> mApkToDelete;
 
     private ConfigManager() {
-
+        mFetcher = new NetFileFetcher();
     }
 
     public static ConfigManager getInstance() {
@@ -111,9 +111,6 @@ public class ConfigManager {
     }
 
     public void updateConfig(Context context, final Runnable afterLoad) {
-        if (null == mFetcher) {
-            mFetcher = new NetFileFetcher();
-        }
         mFetcher.fetch(context, new OnConfigFetchedListener() {
             @Override
             public void onConfigFetched(Config config) {

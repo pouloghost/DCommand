@@ -6,6 +6,9 @@ import java.io.File;
 
 import dalvik.system.DexClassLoader;
 import gt.research.dc.core.AbsCommand;
+import gt.research.dc.core.command.verifier.IApkVerifier;
+import gt.research.dc.core.command.verifier.OnVerifiedListener;
+import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.core.constant.FileConstants;
 import gt.research.dc.data.ApkInfo;
@@ -20,8 +23,10 @@ import gt.research.dc.util.NetUtils;
 public class CommandManager {
     private volatile static CommandManager sInstance;
 
-    private CommandManager() {
+    private IApkVerifier mVerifier;
 
+    private CommandManager() {
+        mVerifier = new OriginalVerifier();
     }
 
     public static CommandManager getInstance() {
@@ -85,7 +90,11 @@ public class CommandManager {
         });
     }
 
-    private void downloadApk(Context context, final ApkInfo apk, final File apkFile, final Runnable afterLoad) {
+    public void setVerifier(IApkVerifier mVerifier) {
+        this.mVerifier = mVerifier;
+    }
+
+    private void downloadApk(final Context context, final ApkInfo apk, final File apkFile, final Runnable afterLoad) {
         NetUtils.download(context, apk.url, new NetUtils.DownloadListener() {
             @Override
             public void onEnqueue(String url) {
@@ -94,12 +103,12 @@ public class CommandManager {
 
             @Override
             public void onFinish(String url, String file) {
-                onFileGot(file, apkFile, afterLoad);
+                onFileGot(context, file, apkFile, afterLoad);
             }
 
             @Override
             public void onCached(String url, String file) {
-                onFileGot(file, apkFile, afterLoad);
+                onFileGot(context, file, apkFile, afterLoad);
             }
 
             @Override
@@ -111,11 +120,20 @@ public class CommandManager {
         });
     }
 
-    private void onFileGot(String file, File apkFile, Runnable afterLoad) {
-        FileUtils.copy(file, apkFile.getAbsolutePath());
-        if (null != afterLoad) {
-            afterLoad.run();
-        }
+    private void onFileGot(Context context, final String file, final File apkFile, final Runnable afterLoad) {
+        mVerifier.verify(context, file, new OnVerifiedListener() {
+            @Override
+            public void onVerified(boolean isSecure) {
+                if (isSecure) {
+                    FileUtils.copy(file, apkFile.getAbsolutePath());
+                } else {
+                    new File(file).delete();
+                }
+                if (null != afterLoad) {
+                    afterLoad.run();
+                }
+            }
+        });
     }
 
     public interface LoadCommandListener<T> {
