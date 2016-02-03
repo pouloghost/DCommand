@@ -24,9 +24,11 @@ public class CommandManager {
     private volatile static CommandManager sInstance;
 
     private IApkVerifier mVerifier;
+    private CommandCache mCache;
 
     private CommandManager() {
         mVerifier = new OriginalVerifier();
+        mCache = new CommandCache();
     }
 
     public static CommandManager getInstance() {
@@ -40,8 +42,16 @@ public class CommandManager {
         return sInstance;
     }
 
-    public <T extends AbsCommand> void getImplement(final Context context, final Class<T> intf, final LoadCommandListener<T> listener) {
+    public <T extends AbsCommand> void getImplement(final Context context, final Class<T> intf,
+                                                    boolean ignoreCache, final LoadCommandListener<T> listener) {
         if (null == listener) {
+            return;
+        }
+        if (!ignoreCache) {
+            T command = mCache.getCachedCommand(intf);
+            if (null != command) {
+                listener.onCommandLoaded(command);
+            }
             return;
         }
         ConfigManager.getInstance().getApk(context, intf.getName(), new ConfigManager.LoadApkInfoListener() {
@@ -88,6 +98,11 @@ public class CommandManager {
                 afterLoad.run();
             }
         });
+    }
+
+    public <T extends AbsCommand> void getImplement(final Context context, final Class<T> intf,
+                                                    final LoadCommandListener<T> listener) {
+        getImplement(context, intf, false, listener);
     }
 
     public void setVerifier(IApkVerifier mVerifier) {
