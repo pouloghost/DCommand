@@ -1,6 +1,7 @@
 package gt.research.dcommand;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -10,6 +11,7 @@ import gt.research.dc.core.command.verifier.OnVerifiedListener;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
+import gt.research.dc.util.LogUtils;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mVersion;
@@ -39,12 +41,14 @@ public class MainActivity extends AppCompatActivity {
 //                        });
 //                FileUtils.copy(Environment.getExternalStorageDirectory() + "/export.apk",
 //                        MainActivity.this.getDir(FileConstants.DIR_DOWNLOAD, Context.MODE_PRIVATE).getAbsolutePath() + "/export.apk");
-                new OriginalVerifier().verify(MainActivity.this, "export.apk", new OnVerifiedListener() {
-                    @Override
-                    public void onVerified(boolean isSecure) {
-
-                    }
-                });
+                new OriginalVerifier().verify(MainActivity.this,
+                        Environment.getExternalStorageDirectory() + "/export.apk", new OnVerifiedListener() {
+                            @Override
+                            public void onVerified(boolean isSecure) {
+                                LogUtils.debug("secure " + isSecure);
+                            }
+                        });
+//                new OriginalVerifier().getLocalSignature(MainActivity.this);
             }
         });
 
