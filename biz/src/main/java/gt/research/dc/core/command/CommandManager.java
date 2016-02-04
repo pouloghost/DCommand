@@ -12,7 +12,7 @@ import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.core.constant.FileConstants;
 import gt.research.dc.data.ApkInfo;
-import gt.research.dc.data.CommandContext;
+import gt.research.dc.util.CommandUtils;
 import gt.research.dc.util.FileUtils;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.NetUtils;
@@ -75,20 +75,8 @@ public class CommandManager {
                         }
                         DexClassLoader dexClassLoader = new DexClassLoader(apkFile.getAbsolutePath(),
                                 cacheDir.getAbsolutePath(), null, context.getClassLoader());
-                        try {
-                            T command = (T) dexClassLoader.loadClass(info.getImplement(intf.getName())).newInstance();
-
-                            CommandContext commandContext = new CommandContext();
-                            commandContext.classLoader = dexClassLoader;
-                            commandContext.apkInfo = new ApkInfo(info);
-                            command.setContext(commandContext);
-
-                            listener.onCommandLoaded(command);
-                        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                            LogUtils.exception(e);
-                            listener.onCommandLoaded(null);
-                            return;
-                        }
+                        T command = CommandUtils.constructCommand(intf, info, dexClassLoader);
+                        listener.onCommandLoaded(command);
                     }
                 };
                 if (!info.isLatest || !apkFile.exists()) {
