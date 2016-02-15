@@ -64,8 +64,10 @@ public class ConfigManager {
             }
         };
         if (null == mInterfaceIndex) {
-            updateConfig(context, afterLoad);
-            return;
+            loadLocalConfig(context);
+            if(null == mInterfaceIndex) {
+                updateConfig(context, afterLoad);
+            }
         }
         afterLoad.run();
     }
@@ -91,6 +93,9 @@ public class ConfigManager {
         }
 
         List<Intf> intfs = intfDao.loadAll();
+        if (0 == intfs.size()) {
+            return;
+        }
         mInterfaceIndex = new HashMap<>();
         for (Intf intf : intfs) {
             ApkInfo apkInfo = apkInfos.get(intf.getApk());
