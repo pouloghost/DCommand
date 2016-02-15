@@ -76,6 +76,7 @@ public class CommandManager {
                         DexClassLoader dexClassLoader = new DexClassLoader(apkFile.getAbsolutePath(),
                                 cacheDir.getAbsolutePath(), null, context.getClassLoader());
                         T command = CommandUtils.constructCommand(intf, info, dexClassLoader);
+                        mCache.onNewCommand(intf, command);
                         listener.onCommandLoaded(command);
                     }
                 };
