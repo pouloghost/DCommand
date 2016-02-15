@@ -51,8 +51,8 @@ public class CommandManager {
             T command = mCache.getCachedCommand(intf);
             if (null != command) {
                 listener.onCommandLoaded(command);
+                return;
             }
-            return;
         }
         ConfigManager.getInstance().getApk(context, intf.getName(), new ConfigManager.LoadApkInfoListener() {
             @Override
