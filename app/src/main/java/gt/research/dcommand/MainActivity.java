@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -16,6 +16,7 @@ import gt.research.dc.core.resource.ResourceManager;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mVersion;
+    private ImageView mImage;
     private Spinner mUrl;
     private NetFileFetcher mFetcher;
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mVersion = (TextView) findViewById(R.id.version);
+        mImage = (ImageView) findViewById(R.id.image);
         mUrl = (Spinner) findViewById(R.id.url);
         mFetcher = new NetFileFetcher();
 
@@ -81,8 +83,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onResourceLoaded(ResourceFetcher fetcher) {
                         if (null == fetcher) {
                             mVersion.setText("error");
+                            return;
                         }
                         mVersion.setText(fetcher.getString("test"));
+                        mImage.setImageDrawable(fetcher.getDrawable("test"));
                     }
                 });
             }
