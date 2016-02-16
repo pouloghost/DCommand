@@ -27,6 +27,7 @@ public class ApkDao extends AbstractDao<Apk, String> {
         public final static Property Version = new Property(1, String.class, "version", false, "VERSION");
         public final static Property Url = new Property(2, String.class, "url", false, "URL");
         public final static Property Latest = new Property(3, boolean.class, "latest", false, "LATEST");
+        public final static Property PkgName = new Property(4, String.class, "pkgName", false, "PKG_NAME");
     };
 
 
@@ -45,7 +46,8 @@ public class ApkDao extends AbstractDao<Apk, String> {
                 "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: id
                 "\"VERSION\" TEXT NOT NULL ," + // 1: version
                 "\"URL\" TEXT NOT NULL ," + // 2: url
-                "\"LATEST\" INTEGER NOT NULL );"); // 3: latest
+                "\"LATEST\" INTEGER NOT NULL ," + // 3: latest
+                "\"PKG_NAME\" TEXT);"); // 4: pkgName
         // Add Indexes
         db.execSQL("CREATE INDEX " + constraint + "IDX_APK_ID ON APK" +
                 " (\"ID\");");
@@ -65,6 +67,11 @@ public class ApkDao extends AbstractDao<Apk, String> {
         stmt.bindString(2, entity.getVersion());
         stmt.bindString(3, entity.getUrl());
         stmt.bindLong(4, entity.getLatest() ? 1L: 0L);
+ 
+        String pkgName = entity.getPkgName();
+        if (pkgName != null) {
+            stmt.bindString(5, pkgName);
+        }
     }
 
     /** @inheritdoc */
@@ -80,7 +87,8 @@ public class ApkDao extends AbstractDao<Apk, String> {
             cursor.getString(offset + 0), // id
             cursor.getString(offset + 1), // version
             cursor.getString(offset + 2), // url
-            cursor.getShort(offset + 3) != 0 // latest
+            cursor.getShort(offset + 3) != 0, // latest
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // pkgName
         );
         return entity;
     }
@@ -92,6 +100,7 @@ public class ApkDao extends AbstractDao<Apk, String> {
         entity.setVersion(cursor.getString(offset + 1));
         entity.setUrl(cursor.getString(offset + 2));
         entity.setLatest(cursor.getShort(offset + 3) != 0);
+        entity.setPkgName(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
     /** @inheritdoc */

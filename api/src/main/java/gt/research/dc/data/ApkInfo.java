@@ -10,6 +10,7 @@ public class ApkInfo {
     public String url;
     public String id;
     public boolean isLatest;
+    public String pkgName;
     public HashMap<String, String> interfaces;
 
     public ApkInfo() {

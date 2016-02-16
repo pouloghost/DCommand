@@ -57,6 +57,7 @@ public class ResourceManager {
             LogUtils.exception(throwable);
             listener.onResourceLoaded(null);
         }
+
     }
 
     public interface LoadResourceListener {

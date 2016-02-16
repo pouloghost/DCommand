@@ -21,6 +21,7 @@ public class NetFileFetcher implements IConfigFetcher {
 
     @Override
     public void fetch(Context context, final OnConfigFetchedListener listener) {
+        LogUtils.debug(mUrl);
         NetUtils.download(context, mUrl,
                 new NetUtils.DownloadListener() {
                     @Override

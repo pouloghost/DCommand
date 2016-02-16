@@ -11,10 +11,12 @@ import gt.research.dc.core.command.verifier.OnVerifiedListener;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.data.ApkInfo;
+import gt.research.dc.util.BinaryXmlUtils;
 import gt.research.dc.util.CommandUtils;
 import gt.research.dc.util.FileUtils;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.NetUtils;
+import gt.research.dc.util.ResourceUtils;
 
 /**
  * Created by ayi.zty on 2016/1/26.
@@ -106,12 +108,12 @@ public class CommandManager {
 
             @Override
             public void onFinish(String url, String file) {
-                onFileGot(context, file, apkFile, afterLoad);
+                onFileGot(context, file, apkFile, afterLoad, true);
             }
 
             @Override
             public void onCached(String url, String file) {
-                onFileGot(context, file, apkFile, afterLoad);
+                onFileGot(context, file, apkFile, afterLoad, false);
             }
 
             @Override
@@ -123,7 +125,8 @@ public class CommandManager {
         });
     }
 
-    private void onFileGot(Context context, final String file, final File apkFile, final Runnable afterLoad) {
+    private void onFileGot(final Context context, final String file, final File apkFile,
+                           final Runnable afterLoad, final boolean updatePackage) {
         mVerifier.verify(context, file, new OnVerifiedListener() {
             @Override
             public void onVerified(boolean isSecure) {
@@ -131,6 +134,9 @@ public class CommandManager {
                     FileUtils.copy(file, apkFile.getAbsolutePath());
                 } else {
                     new File(file).delete();
+                }
+                if (updatePackage && apkFile.exists()) {
+                    ResourceUtils.updateApkPackage(context, apkFile);
                 }
                 if (null != afterLoad) {
                     afterLoad.run();

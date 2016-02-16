@@ -13,6 +13,7 @@ public class Apk {
     /** Not-null value. */
     private String url;
     private boolean latest;
+    private String pkgName;
 
     public Apk() {
     }
@@ -21,11 +22,12 @@ public class Apk {
         this.id = id;
     }
 
-    public Apk(String id, String version, String url, boolean latest) {
+    public Apk(String id, String version, String url, boolean latest, String pkgName) {
         this.id = id;
         this.version = version;
         this.url = url;
         this.latest = latest;
+        this.pkgName = pkgName;
     }
 
     /** Not-null value. */
@@ -64,6 +66,14 @@ public class Apk {
 
     public void setLatest(boolean latest) {
         this.latest = latest;
+    }
+
+    public String getPkgName() {
+        return pkgName;
+    }
+
+    public void setPkgName(String pkgName) {
+        this.pkgName = pkgName;
     }
 
 }

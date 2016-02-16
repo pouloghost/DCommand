@@ -6,6 +6,7 @@ import de.greenrobot.daogenerator.Schema;
 
 public class DbGenerator {
     private static final String sDbRoot = "D:\\Workbench\\DCommand\\biz\\src\\main\\java";
+
     public static void main(String[] args) throws Exception {
         Schema schema = new Schema(1, "gt.research.dc.core.db");
 
@@ -21,9 +22,10 @@ public class DbGenerator {
         apk.addStringProperty("version").notNull();
         apk.addStringProperty("url").notNull();
         apk.addBooleanProperty("latest").notNull();
+        apk.addStringProperty("pkgName");
     }
 
-    private static void addIntf(Schema schema){
+    private static void addIntf(Schema schema) {
         Entity intf = schema.addEntity("Intf");
         intf.addStringProperty("intf").notNull().primaryKey().index();
         intf.addStringProperty("impl").notNull();

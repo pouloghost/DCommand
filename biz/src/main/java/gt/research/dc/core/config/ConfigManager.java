@@ -102,6 +102,7 @@ public class ConfigManager {
             apkInfo.version = apk.getVersion();
             apkInfo.url = apk.getUrl();
             apkInfo.isLatest = apk.getLatest();
+            apkInfo.pkgName = apk.getPkgName();
             apkInfos.put(apkInfo.id, apkInfo);
         }
 
@@ -167,6 +168,7 @@ public class ConfigManager {
             loadLocalConfig(context);
             if (null == mInterfaceIndex) {
                 updateConfig(context, afterLoad);
+                return;
             }
         }
         afterLoad.run();
@@ -199,7 +201,7 @@ public class ConfigManager {
             Apk old = apkDao.load(apkInfo.id);
             boolean isLatest = null != old &&
                     (VersionUtils.isLatest(old.getVersion(), apkInfo.version) && old.getLatest());
-            Apk apk = new Apk(apkInfo.id, apkInfo.version, apkInfo.url, isLatest);
+            Apk apk = new Apk(apkInfo.id, apkInfo.version, apkInfo.url, isLatest, apkInfo.pkgName);
             apkDao.insertOrReplace(apk);
         }
     }
