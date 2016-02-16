@@ -14,19 +14,15 @@ public class ResourceCache {
         mCache = new LruCache<>(6);
     }
 
-    public ResourceFetcher getCachedResource(String id) {
-        Entry entry = mCache.get(id);
-        if (null == entry) {
-            return null;
-        }
-        return entry.fetcher;
+    public Entry getCachedResource(String id) {
+        return mCache.get(id);
     }
 
     public void onNewResource(ApkInfo info, ResourceFetcher fetcher) {
         mCache.put(info.id, new Entry(info, fetcher));
     }
 
-    private static class Entry {
+    public static class Entry {
         public ResourceFetcher fetcher;
         public ApkInfo info;
 

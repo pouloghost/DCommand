@@ -56,9 +56,9 @@ public class ResourceManager {
             return;
         }
         if (!ignoreCache) {
-            ResourceFetcher fetcher = mCache.getCachedResource(id);
-            if (null != fetcher) {
-                listener.onResourceLoaded(fetcher);
+            ResourceCache.Entry entry = mCache.getCachedResource(id);
+            if (null != entry) {
+                listener.onResourceLoaded(entry.fetcher, entry.info);
                 return;
             }
         }
@@ -67,7 +67,7 @@ public class ResourceManager {
             public void onApkLoaded(final ApkInfo info) {
                 if (null == info) {
                     LogUtils.debug("no info");
-                    listener.onResourceLoaded(null);
+                    listener.onResourceLoaded(null, info);
                     return;
                 }
 
@@ -76,7 +76,7 @@ public class ResourceManager {
                     @Override
                     public void run() {
                         if (!apkFile.exists()) {
-                            listener.onResourceLoaded(null);
+                            listener.onResourceLoaded(null, info);
                             return;
                         }
                         if (TextUtils.isEmpty(info.pkgName)) {
@@ -84,7 +84,7 @@ public class ResourceManager {
                             info.pkgName = ResourceUtils.updateApkPackage(context, apkFile);
                         }
                         if (TextUtils.isEmpty(info.pkgName)) {
-                            listener.onResourceLoaded(null);
+                            listener.onResourceLoaded(null, info);
                             return;
                         }
                         try {
@@ -93,10 +93,10 @@ public class ResourceManager {
                                     new Class[]{String.class}, new Object[]{apkFile.getAbsolutePath()});
                             ResourceFetcher fetcher = new ResourceFetcher(info.pkgName, new Resources(assetManager, mMetrics, mConfiguration));
                             mCache.onNewResource(info, fetcher);
-                            listener.onResourceLoaded(fetcher);
+                            listener.onResourceLoaded(fetcher, info);
                         } catch (Throwable throwable) {
                             LogUtils.exception(throwable);
-                            listener.onResourceLoaded(null);
+                            listener.onResourceLoaded(null, info);
                         }
                     }
                 };
@@ -114,6 +114,6 @@ public class ResourceManager {
     }
 
     public interface LoadResourceListener {
-        void onResourceLoaded(ResourceFetcher fetcher);
+        void onResourceLoaded(ResourceFetcher fetcher, ApkInfo info);
     }
 }

@@ -1,5 +1,6 @@
 package gt.research.dcommand;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -76,19 +77,24 @@ public class MainActivity extends AppCompatActivity {
 //                LogUtils.debug(getApplicationInfo().sourceDir);
 
                 //load resource
-                Resources res = getResources();
-                ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
-                resourceManager.loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
-                    @Override
-                    public void onResourceLoaded(ResourceFetcher fetcher) {
-                        if (null == fetcher) {
-                            mVersion.setText("error");
-                            return;
-                        }
-                        mVersion.setText(fetcher.getString("test"));
-                        mImage.setImageDrawable(fetcher.getDrawable("test"));
-                    }
-                });
+//                Resources res = getResources();
+//                ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
+//                resourceManager.loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
+//                    @Override
+//                    public void onResourceLoaded(ResourceFetcher fetcher) {
+//                        if (null == fetcher) {
+//                            mVersion.setText("error");
+//                            return;
+//                        }
+//                        mVersion.setText(fetcher.getString("test"));
+//                        mImage.setImageDrawable(fetcher.getDrawable("test"));
+//                    }
+//                });
+
+                //load layout
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, DynamicLayoutActivity.class);
+                startActivity(intent);
             }
         });
 
