@@ -73,6 +73,11 @@ public class FileUtils {
         return true;
     }
 
+    public static String fileToId(File apkFile) {
+        String name = apkFile.getName();
+        return name.substring(0, name.indexOf(FileConstants.SUFFIX_APK));
+    }
+
     public static File getCacheDir(Context context) {
         if (null == sCacheDir) {
             sCacheDir = context.getDir(FileConstants.DIR_DOWNLOAD, Context.MODE_PRIVATE);
@@ -80,7 +85,7 @@ public class FileUtils {
         return sCacheDir;
     }
 
-    public static File getCacheApkFile(Context context, ApkInfo info){
+    public static File getCacheApkFile(Context context, ApkInfo info) {
         File cacheDir = getCacheDir(context);
         return new File(cacheDir, info.id + FileConstants.SUFFIX_APK);
     }

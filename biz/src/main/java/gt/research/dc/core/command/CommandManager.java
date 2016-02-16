@@ -11,7 +11,7 @@ import gt.research.dc.core.command.verifier.OnVerifiedListener;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.data.ApkInfo;
-import gt.research.dc.util.BinaryXmlUtils;
+import gt.research.dc.util.ApkUtils;
 import gt.research.dc.util.CommandUtils;
 import gt.research.dc.util.FileUtils;
 import gt.research.dc.util.LogUtils;
@@ -82,7 +82,7 @@ public class CommandManager {
                     }
                 };
                 if (!info.isLatest || !apkFile.exists()) {
-                    downloadApk(context, info, apkFile, afterLoad);
+                    ApkUtils.downloadAndVerifyApk(context, info, apkFile, afterLoad, mVerifier);
                     return;
                 }
                 afterLoad.run();
@@ -97,52 +97,6 @@ public class CommandManager {
 
     public void setVerifier(IApkVerifier mVerifier) {
         this.mVerifier = mVerifier;
-    }
-
-    private void downloadApk(final Context context, final ApkInfo apk, final File apkFile, final Runnable afterLoad) {
-        NetUtils.download(context, apk.url, new NetUtils.DownloadListener() {
-            @Override
-            public void onEnqueue(String url) {
-
-            }
-
-            @Override
-            public void onFinish(String url, String file) {
-                onFileGot(context, file, apkFile, afterLoad, true);
-            }
-
-            @Override
-            public void onCached(String url, String file) {
-                onFileGot(context, file, apkFile, afterLoad, false);
-            }
-
-            @Override
-            public void onFail() {
-                if (null != afterLoad) {
-                    afterLoad.run();
-                }
-            }
-        });
-    }
-
-    private void onFileGot(final Context context, final String file, final File apkFile,
-                           final Runnable afterLoad, final boolean updatePackage) {
-        mVerifier.verify(context, file, new OnVerifiedListener() {
-            @Override
-            public void onVerified(boolean isSecure) {
-                if (isSecure) {
-                    FileUtils.copy(file, apkFile.getAbsolutePath());
-                } else {
-                    new File(file).delete();
-                }
-                if (updatePackage && apkFile.exists()) {
-                    ResourceUtils.updateApkPackage(context, apkFile);
-                }
-                if (null != afterLoad) {
-                    afterLoad.run();
-                }
-            }
-        });
     }
 
     public interface LoadCommandListener<T> {

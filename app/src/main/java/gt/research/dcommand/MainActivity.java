@@ -1,23 +1,16 @@
 package gt.research.dcommand;
 
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import gt.research.dc.core.IVersion;
-import gt.research.dc.core.command.CommandManager;
 import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
-import gt.research.dc.util.BinaryXmlUtils;
-import gt.research.dc.util.LogUtils;
+import gt.research.dc.core.resource.ResourceFetcher;
+import gt.research.dc.core.resource.ResourceManager;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mVersion;
@@ -42,17 +35,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //get command
-                CommandManager.getInstance().
-                        getImplement(MainActivity.this, IVersion.class, new CommandManager.LoadCommandListener<IVersion>() {
-                            @Override
-                            public void onCommandLoaded(IVersion command) {
-                                if(null == command){
-                                    mVersion.setText("error");
-                                    return;
-                                }
-                                mVersion.setText(command.getVersion());
-                            }
-                        });
+//                CommandManager.getInstance().
+//                        getImplement(MainActivity.this, IVersion.class, new CommandManager.LoadCommandListener<IVersion>() {
+//                            @Override
+//                            public void onCommandLoaded(IVersion command) {
+//                                if(null == command){
+//                                    mVersion.setText("error");
+//                                    return;
+//                                }
+//                                mVersion.setText(command.getVersion());
+//                            }
+//                        });
 
                 //verify apk
 //                FileUtils.copy(Environment.getExternalStorageDirectory() + "/export.apk",
@@ -68,33 +61,24 @@ public class MainActivity extends AppCompatActivity {
 //                LogUtils.debug(getApplicationInfo().sourceDir);
 
                 //load resource
-//                ConfigManager.getInstance().getApkById(MainActivity.this, "IVersion", new ConfigManager.LoadApkInfoListener() {
-//                    @Override
-//                    public void onApkLoaded(ApkInfo info) {
-//                        if (null == info) {
-//                            return;
-//                        }
-//                        Resources res = getResources();
-//                        ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
-//                        resourceManager.loadResource(MainActivity.this, info, new ResourceManager.LoadResourceListener() {
-//                            @Override
-//                            public void onResourceLoaded(Resources resources) {
-//                                int id = resources.getIdentifier("test", "string", "gt.research.export");
-//                                mVersion.setText(resources.getString(id));
-//                            }
-//                        });
-//                    }
-//                });
-
-//                LogUtils.debug(BinaryXmlUtils.readManifest(Environment.getExternalStorageDirectory().getAbsolutePath() + "/export-ok.apk"));
-
+                Resources res = getResources();
+                ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
+                resourceManager.loadResource(MainActivity.this, "IVersion", new ResourceManager.LoadResourceListener() {
+                    @Override
+                    public void onResourceLoaded(ResourceFetcher fetcher) {
+                        if (null == fetcher) {
+                            mVersion.setText("error");
+                        }
+                        mVersion.setText(fetcher.getString("test"));
+                    }
+                });
             }
         });
 
         findViewById(R.id.updateConfig).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ConfigManager.getInstance().updateLocalConfig(MainActivity.this);
+                ConfigManager.getInstance().updateConfig(MainActivity.this, null);
             }
         });
     }

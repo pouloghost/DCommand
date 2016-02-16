@@ -120,16 +120,7 @@ public class ConfigManager {
         }
     }
 
-    public void updateLocalConfig(final Context context) {
-        updateConfig(context, new Runnable() {
-            @Override
-            public void run() {
-                saveConfigToDb(context);
-            }
-        });
-    }
-
-    public void updateConfig(Context context, final Runnable afterLoad) {
+    public void updateConfig(final Context context, final Runnable afterLoad) {
         mFetcher.fetch(context, new OnConfigFetchedListener() {
             @Override
             public void onConfigFetched(Config config) {
@@ -149,6 +140,8 @@ public class ConfigManager {
                 if (null != config.delete) {
                     mApkToDelete = config.delete;
                 }
+                saveConfigToDb(context);
+
                 if (null != afterLoad) {
                     afterLoad.run();
                 }
