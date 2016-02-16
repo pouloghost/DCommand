@@ -80,6 +80,7 @@ public class ResourceManager {
                             return;
                         }
                         if (TextUtils.isEmpty(info.pkgName)) {
+                            LogUtils.debug("empty package update");
                             info.pkgName = ResourceUtils.updateApkPackage(context, apkFile);
                         }
                         if (TextUtils.isEmpty(info.pkgName)) {
