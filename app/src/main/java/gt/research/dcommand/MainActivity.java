@@ -4,7 +4,9 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import gt.research.dc.core.config.ConfigManager;
@@ -14,7 +16,7 @@ import gt.research.dc.core.resource.ResourceManager;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mVersion;
-    private EditText mUrl;
+    private Spinner mUrl;
     private NetFileFetcher mFetcher;
 
     @Override
@@ -22,14 +24,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mVersion = (TextView) findViewById(R.id.version);
-        mUrl = (EditText) findViewById(R.id.url);
+        mUrl = (Spinner) findViewById(R.id.url);
         mFetcher = new NetFileFetcher();
 
         final ConfigManager configManager = ConfigManager.getInstance();
         configManager.setConfigFetcher(mFetcher);
 
-        String url = mUrl.getText().toString();
-        mFetcher.setUrl(url);
+        mUrl.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String url = (String) parent.getAdapter().getItem((int) id);
+                mFetcher.setUrl(url);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        mUrl.setSelection(0);
 
         findViewById(R.id.call).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 //load resource
                 Resources res = getResources();
                 ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
-                resourceManager.loadResource(MainActivity.this, "IVersion", new ResourceManager.LoadResourceListener() {
+                resourceManager.loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
                     @Override
                     public void onResourceLoaded(ResourceFetcher fetcher) {
                         if (null == fetcher) {

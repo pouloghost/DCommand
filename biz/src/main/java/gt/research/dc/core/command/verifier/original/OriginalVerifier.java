@@ -22,6 +22,7 @@ import gt.research.dc.util.ReflectUtils;
  * Created by ayi.zty on 2016/2/1.
  */
 public class OriginalVerifier implements IApkVerifier {
+    //// TODO: 2016/2/16 compatibility, api 21 and up is ok. Lower OS is to crash.
     private static final String sKeyModulus = "modulus=";
     private static final String sKeyExponent = ",publicExponent";
 

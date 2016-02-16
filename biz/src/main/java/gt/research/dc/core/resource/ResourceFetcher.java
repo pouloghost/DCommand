@@ -6,6 +6,7 @@ import android.content.res.Resources;
  * Created by ayi.zty on 2016/2/16.
  */
 public class ResourceFetcher {
+    // TODO: 2016/2/16 add more types of resources
     private static final String sTypeString = "string";
 
     private String mPackage;
