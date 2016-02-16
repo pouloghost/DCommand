@@ -20,6 +20,27 @@ public class ReflectUtils {
         return null;
     }
 
+    public static void setFieldValue(Object object, String fieldName, Object value) {
+        try {
+            Class<?> clazz = object.getClass();
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(object, value);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            LogUtils.exception(e);
+        }
+    }
+
+    public static void setFieldValueAsClass(Object object, Class clazz, String fieldName, Object value) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(object, value);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            LogUtils.exception(e);
+        }
+    }
+
     public static Object invokeMethod(Object object, String methodName) throws Throwable {
         try {
             Class<?> clazz = object.getClass();

@@ -23,6 +23,10 @@ public class ResourceFetcher {
         mResources = resources;
     }
 
+    public Resources getResources() {
+        return mResources;
+    }
+
     public String getString(String name) {
         int id = mResources.getIdentifier(name, sTypeString, mPackage);
         return mResources.getString(id);

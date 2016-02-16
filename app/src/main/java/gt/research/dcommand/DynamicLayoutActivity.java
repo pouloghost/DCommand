@@ -1,6 +1,5 @@
 package gt.research.dcommand;
 
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +12,6 @@ import org.xmlpull.v1.XmlPullParser;
 import gt.research.dc.core.resource.ResourceFetcher;
 import gt.research.dc.core.resource.ResourceManager;
 import gt.research.dc.data.ApkInfo;
-import gt.research.dc.util.FileUtils;
-import gt.research.dc.util.LogUtils;
-import gt.research.dc.util.ReflectUtils;
 
 public class DynamicLayoutActivity extends AppCompatActivity {
 
@@ -34,17 +30,6 @@ public class DynamicLayoutActivity extends AppCompatActivity {
                 }
                 XmlPullParser xmlPullParser = fetcher.getLayout("dynamic");
                 if (null == xmlPullParser) {
-                    finish();
-                    return;
-                }
-
-                AssetManager assetManager = res.getAssets();
-                try {
-                    ReflectUtils.invokeMethod(assetManager, "addAssetPath",
-                            new Class[]{String.class},
-                            new Object[]{FileUtils.getCacheApkFile(DynamicLayoutActivity.this, info).getAbsolutePath()});
-                } catch (Throwable throwable) {
-                    LogUtils.exception(throwable);
                     finish();
                     return;
                 }
