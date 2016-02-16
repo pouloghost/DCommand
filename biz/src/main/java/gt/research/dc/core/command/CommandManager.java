@@ -10,7 +10,6 @@ import gt.research.dc.core.command.verifier.IApkVerifier;
 import gt.research.dc.core.command.verifier.OnVerifiedListener;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.config.ConfigManager;
-import gt.research.dc.core.constant.FileConstants;
 import gt.research.dc.data.ApkInfo;
 import gt.research.dc.util.CommandUtils;
 import gt.research.dc.util.FileUtils;
@@ -54,7 +53,7 @@ public class CommandManager {
                 return;
             }
         }
-        ConfigManager.getInstance().getApk(context, intf.getName(), new ConfigManager.LoadApkInfoListener() {
+        ConfigManager.getInstance().getApkByInterface(context, intf.getName(), new ConfigManager.LoadApkInfoListener() {
             @Override
             public void onApkLoaded(final ApkInfo info) {
                 if (null == info) {
@@ -63,8 +62,8 @@ public class CommandManager {
                     return;
                 }
 
-                final File cacheDir = context.getDir(FileConstants.DIR_DOWNLOAD, Context.MODE_PRIVATE);
-                final File apkFile = new File(cacheDir, info.id + FileConstants.SUFFIX_APK);
+                final File cacheDir = FileUtils.getCacheDir(context);
+                final File apkFile = FileUtils.getCacheApkFile(context, info);
                 Runnable afterLoad = new Runnable() {
                     @Override
                     public void run() {

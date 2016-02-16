@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textUri"
-        android:text="https://os.alipayobjects.com/rmsportal/fKTOIkpKjOnhEuF.json" />
+        android:text="https://os.alipayobjects.com/rmsportal/BXVvgyMNQzoZSFY.json" />
 
     <TextView
         android:id="@+id/version"

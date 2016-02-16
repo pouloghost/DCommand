@@ -10,11 +10,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import gt.research.dc.core.constant.FileConstants;
+import gt.research.dc.data.ApkInfo;
 
 /**
  * Created by ayi.zty on 2016/1/25.
  */
 public class FileUtils {
+    private static File sCacheDir;
+
     public static void deleteApk(Context context, String id) {
         File dir = context.getDir(FileConstants.DIR_DOWNLOAD, Context.MODE_PRIVATE);
         if (!dir.exists()) {
@@ -68,6 +71,18 @@ public class FileUtils {
             closeStream(srcStream);
         }
         return true;
+    }
+
+    public static File getCacheDir(Context context) {
+        if (null == sCacheDir) {
+            sCacheDir = context.getDir(FileConstants.DIR_DOWNLOAD, Context.MODE_PRIVATE);
+        }
+        return sCacheDir;
+    }
+
+    public static File getCacheApkFile(Context context, ApkInfo info){
+        File cacheDir = getCacheDir(context);
+        return new File(cacheDir, info.id + FileConstants.SUFFIX_APK);
     }
 
     private static void closeStream(Closeable stream) {

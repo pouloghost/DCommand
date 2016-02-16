@@ -17,7 +17,7 @@ import gt.research.dc.util.NetUtils;
  * Created by ayi.zty on 2016/1/28.
  */
 public class NetFileFetcher implements IConfigFetcher {
-    private String mUrl = "https://os.alipayobjects.com/rmsportal/QkAfZPDbQxVqHkP.json";
+    private String mUrl;
 
     @Override
     public void fetch(Context context, final OnConfigFetchedListener listener) {
