@@ -27,12 +27,16 @@ public class ResourceManager {
     private Configuration mConfiguration;
 
     private IApkVerifier mVerifier;
+    private ResourceCache mCache;
+
     private volatile static ResourceManager sInstance;
 
     private ResourceManager(DisplayMetrics metrics, Configuration configuration) {
         mMetrics = metrics;
         mConfiguration = configuration;
+
         mVerifier = new OriginalVerifier();
+        mCache = new ResourceCache();
     }
 
     public static ResourceManager getInstance(DisplayMetrics metrics, Configuration configuration) {
@@ -46,9 +50,17 @@ public class ResourceManager {
         return sInstance;
     }
 
-    public void loadResource(final Context context, final String id, final LoadResourceListener listener) {
+    public void loadResource(final Context context, final String id, boolean ignoreCache,
+                             final LoadResourceListener listener) {
         if (null == listener) {
             return;
+        }
+        if (!ignoreCache) {
+            ResourceFetcher fetcher = mCache.getCachedResource(id);
+            if (null != fetcher) {
+                listener.onResourceLoaded(fetcher);
+                return;
+            }
         }
         ConfigManager.getInstance().getApkById(context, id, new ConfigManager.LoadApkInfoListener() {
             @Override
@@ -78,8 +90,9 @@ public class ResourceManager {
                             AssetManager assetManager = AssetManager.class.newInstance();
                             ReflectUtils.invokeMethod(assetManager, "addAssetPath",
                                     new Class[]{String.class}, new Object[]{apkFile.getAbsolutePath()});
-                            Resources resources = new Resources(assetManager, mMetrics, mConfiguration);
-                            listener.onResourceLoaded(new ResourceFetcher(info.pkgName, resources));
+                            ResourceFetcher fetcher = new ResourceFetcher(info.pkgName, new Resources(assetManager, mMetrics, mConfiguration));
+                            mCache.onNewResource(info, fetcher);
+                            listener.onResourceLoaded(fetcher);
                         } catch (Throwable throwable) {
                             LogUtils.exception(throwable);
                             listener.onResourceLoaded(null);
