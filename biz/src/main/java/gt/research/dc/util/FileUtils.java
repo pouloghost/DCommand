@@ -42,8 +42,11 @@ public class FileUtils {
         File srcFile = new File(src);
         File dstFile = new File(dst);
 
+        if (dstFile.exists()) {
+            dstFile.delete();
+        }
         try {
-            if (!srcFile.exists() || !(dstFile.exists() || dstFile.createNewFile())) {
+            if (!srcFile.exists() || !dstFile.createNewFile()) {
                 return false;
             }
         } catch (IOException e) {
@@ -70,6 +73,7 @@ public class FileUtils {
             closeStream(dstStream);
             closeStream(srcStream);
         }
+        srcFile.delete();
         return true;
     }
 

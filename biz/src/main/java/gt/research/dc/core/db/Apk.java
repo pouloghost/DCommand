@@ -9,11 +9,9 @@ public class Apk {
     /** Not-null value. */
     private String id;
     /** Not-null value. */
-    private String version;
-    /** Not-null value. */
     private String url;
-    private boolean latest;
     private String pkgName;
+    private long timestamp;
 
     public Apk() {
     }
@@ -22,12 +20,11 @@ public class Apk {
         this.id = id;
     }
 
-    public Apk(String id, String version, String url, boolean latest, String pkgName) {
+    public Apk(String id, String url, String pkgName, long timestamp) {
         this.id = id;
-        this.version = version;
         this.url = url;
-        this.latest = latest;
         this.pkgName = pkgName;
+        this.timestamp = timestamp;
     }
 
     /** Not-null value. */
@@ -41,16 +38,6 @@ public class Apk {
     }
 
     /** Not-null value. */
-    public String getVersion() {
-        return version;
-    }
-
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    /** Not-null value. */
     public String getUrl() {
         return url;
     }
@@ -60,20 +47,20 @@ public class Apk {
         this.url = url;
     }
 
-    public boolean getLatest() {
-        return latest;
-    }
-
-    public void setLatest(boolean latest) {
-        this.latest = latest;
-    }
-
     public String getPkgName() {
         return pkgName;
     }
 
     public void setPkgName(String pkgName) {
         this.pkgName = pkgName;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
 }

@@ -101,11 +101,7 @@ public class ResourceManager {
                         }
                     }
                 };
-                if (!info.isLatest || !apkFile.exists()) {
-                    ApkUtils.downloadAndVerifyApk(context, info, apkFile, afterLoad, mVerifier);
-                    return;
-                }
-                afterLoad.run();
+                ApkUtils.downloadAndVerifyApk(context, info, apkFile, afterLoad, mVerifier);
             }
         });
     }

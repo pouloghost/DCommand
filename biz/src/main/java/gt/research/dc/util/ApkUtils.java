@@ -14,6 +14,12 @@ import gt.research.dc.data.ApkInfo;
 public class ApkUtils {
     public static void downloadAndVerifyApk(final Context context, final ApkInfo info, final File apkFile,
                                             final Runnable afterLoad, final IApkVerifier verifier) {
+        if (info.timestamp < apkFile.lastModified()) {
+            if (null != afterLoad) {
+                afterLoad.run();
+            }
+            return;
+        }
         NetUtils.download(context, info.url, new NetUtils.DownloadListener() {
             @Override
             public void onEnqueue(String url) {

@@ -39,6 +39,10 @@ public class ConfigManager {
     private IConfigFetcher mFetcher;
     private List<String> mApkToDelete;
 
+    private ApkDao mApkDao;
+    private IntfDao mIntfDao;
+    private DaoSession mSession;
+
     private ConfigManager() {
         mFetcher = new NetFileFetcher();
     }
@@ -100,10 +104,9 @@ public class ConfigManager {
             ApkInfo apkInfo = new ApkInfo();
             apkInfo.interfaces = new HashMap<>();
             apkInfo.id = apk.getId();
-            apkInfo.version = apk.getVersion();
             apkInfo.url = apk.getUrl();
-            apkInfo.isLatest = apk.getLatest();
             apkInfo.pkgName = apk.getPkgName();
+            apkInfo.timestamp = apk.getTimestamp();
             apkInfos.put(apkInfo.id, apkInfo);
         }
 
@@ -169,48 +172,52 @@ public class ConfigManager {
     }
 
     private void saveConfigToDb(Context context) {
-        SQLiteOpenHelper helper = new DaoMaster.DevOpenHelper(context, DBConstants.DB_FILE_CONFIG, null);
-        DaoMaster daoMaster = new DaoMaster(helper.getReadableDatabase());
-        DaoSession session = daoMaster.newSession();
-        ApkDao apkDao = session.getApkDao();
-        IntfDao intfDao = session.getIntfDao();
+        initDao(context);
 
-        deleteDb(context, apkDao, intfDao);
-        updateDb(apkDao, intfDao);
+        deleteDb(context);
+        updateDb();
 
-        session.clear();
+        mSession.clear();
     }
 
-    private void updateDb(ApkDao apkDao, IntfDao intfDao) {
+    private void updateDb() {
         HashSet<ApkInfo> apkInfos = new HashSet<>();
 
         for (String intf : mInterfaceIndex.keySet()) {
             ApkInfo apkInfo = mInterfaceIndex.get(intf);
             apkInfos.add(apkInfo);
             Intf intfEntity = new Intf(intf, apkInfo.getImplement(intf), apkInfo.id);
-            intfDao.insertOrReplace(intfEntity);
+            mIntfDao.insertOrReplace(intfEntity);
         }
 
         for (ApkInfo apkInfo : apkInfos) {
-            Apk old = apkDao.load(apkInfo.id);
-            boolean isLatest = null != old &&
-                    (VersionUtils.isLatest(old.getVersion(), apkInfo.version) && old.getLatest());
-            Apk apk = new Apk(apkInfo.id, apkInfo.version, apkInfo.url, isLatest, apkInfo.pkgName);
-            apkDao.insertOrReplace(apk);
+            Apk old = mApkDao.load(apkInfo.id);
+            Apk apk = new Apk(apkInfo.id, apkInfo.url, apkInfo.pkgName, apkInfo.timestamp);
+            mApkDao.insertOrReplace(apk);
         }
     }
 
-    private void deleteDb(Context context, ApkDao apkDao, IntfDao intfDao) {
+    private void deleteDb(Context context) {
         for (String id : mApkToDelete) {
-            apkDao.deleteByKey(id);
+            mApkDao.deleteByKey(id);
 
-            QueryBuilder queryBuilder = intfDao.queryBuilder();
+            QueryBuilder queryBuilder = mIntfDao.queryBuilder();
             queryBuilder.where(new WhereCondition.StringCondition("APK = '" + id + "'"));
             DeleteQuery delete = queryBuilder.buildDelete();
             delete.executeDeleteWithoutDetachingEntities();
 
             FileUtils.deleteApk(context, id);
             CacheUtils.invalidateCache(id);
+        }
+    }
+
+    private void initDao(Context context) {
+        if (null == mSession) {
+            SQLiteOpenHelper helper = new DaoMaster.DevOpenHelper(context, DBConstants.DB_FILE_CONFIG, null);
+            DaoMaster daoMaster = new DaoMaster(helper.getReadableDatabase());
+            mSession = daoMaster.newSession();
+            mApkDao = mSession.getApkDao();
+            mIntfDao = mSession.getIntfDao();
         }
     }
 

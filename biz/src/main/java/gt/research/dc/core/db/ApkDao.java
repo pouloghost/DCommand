@@ -24,10 +24,9 @@ public class ApkDao extends AbstractDao<Apk, String> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, String.class, "id", true, "ID");
-        public final static Property Version = new Property(1, String.class, "version", false, "VERSION");
-        public final static Property Url = new Property(2, String.class, "url", false, "URL");
-        public final static Property Latest = new Property(3, boolean.class, "latest", false, "LATEST");
-        public final static Property PkgName = new Property(4, String.class, "pkgName", false, "PKG_NAME");
+        public final static Property Url = new Property(1, String.class, "url", false, "URL");
+        public final static Property PkgName = new Property(2, String.class, "pkgName", false, "PKG_NAME");
+        public final static Property Timestamp = new Property(3, long.class, "timestamp", false, "TIMESTAMP");
     };
 
 
@@ -44,10 +43,9 @@ public class ApkDao extends AbstractDao<Apk, String> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"APK\" (" + //
                 "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: id
-                "\"VERSION\" TEXT NOT NULL ," + // 1: version
-                "\"URL\" TEXT NOT NULL ," + // 2: url
-                "\"LATEST\" INTEGER NOT NULL ," + // 3: latest
-                "\"PKG_NAME\" TEXT);"); // 4: pkgName
+                "\"URL\" TEXT NOT NULL ," + // 1: url
+                "\"PKG_NAME\" TEXT," + // 2: pkgName
+                "\"TIMESTAMP\" INTEGER NOT NULL );"); // 3: timestamp
     }
 
     /** Drops the underlying database table. */
@@ -61,14 +59,13 @@ public class ApkDao extends AbstractDao<Apk, String> {
     protected void bindValues(SQLiteStatement stmt, Apk entity) {
         stmt.clearBindings();
         stmt.bindString(1, entity.getId());
-        stmt.bindString(2, entity.getVersion());
-        stmt.bindString(3, entity.getUrl());
-        stmt.bindLong(4, entity.getLatest() ? 1L: 0L);
+        stmt.bindString(2, entity.getUrl());
  
         String pkgName = entity.getPkgName();
         if (pkgName != null) {
-            stmt.bindString(5, pkgName);
+            stmt.bindString(3, pkgName);
         }
+        stmt.bindLong(4, entity.getTimestamp());
     }
 
     /** @inheritdoc */
@@ -82,10 +79,9 @@ public class ApkDao extends AbstractDao<Apk, String> {
     public Apk readEntity(Cursor cursor, int offset) {
         Apk entity = new Apk( //
             cursor.getString(offset + 0), // id
-            cursor.getString(offset + 1), // version
-            cursor.getString(offset + 2), // url
-            cursor.getShort(offset + 3) != 0, // latest
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // pkgName
+            cursor.getString(offset + 1), // url
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // pkgName
+            cursor.getLong(offset + 3) // timestamp
         );
         return entity;
     }
@@ -94,10 +90,9 @@ public class ApkDao extends AbstractDao<Apk, String> {
     @Override
     public void readEntity(Cursor cursor, Apk entity, int offset) {
         entity.setId(cursor.getString(offset + 0));
-        entity.setVersion(cursor.getString(offset + 1));
-        entity.setUrl(cursor.getString(offset + 2));
-        entity.setLatest(cursor.getShort(offset + 3) != 0);
-        entity.setPkgName(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setUrl(cursor.getString(offset + 1));
+        entity.setPkgName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setTimestamp(cursor.getLong(offset + 3));
      }
     
     /** @inheritdoc */
