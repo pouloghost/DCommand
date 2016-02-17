@@ -54,7 +54,7 @@ public class ConfigManager {
         return sInstance;
     }
 
-    public void getApkByInterface(Context context, final String intf, final LoadApkInfoListener listener) {
+    public void getApkInfoByInterface(Context context, final String intf, final LoadApkInfoListener listener) {
         if (null == listener) {
             return;
         }
@@ -62,13 +62,13 @@ public class ConfigManager {
             @Override
             public void run() {
                 ApkInfo info = mInterfaceIndex.get(intf);
-                listener.onApkLoaded(info);
+                listener.onApkInfoLoaded(info);
             }
         };
-        getApk(context, afterLoad);
+        loadConfigByAllMeans(context, afterLoad);
     }
 
-    public void getApkById(Context context, final String id, final LoadApkInfoListener listener) {
+    public void getApkInfoById(Context context, final String id, final LoadApkInfoListener listener) {
         if (null == listener) {
             return;
         }
@@ -77,13 +77,13 @@ public class ConfigManager {
             public void run() {
                 for (ApkInfo info : mInterfaceIndex.values()) {
                     if (TextUtils.equals(id, info.id)) {
-                        listener.onApkLoaded(info);
+                        listener.onApkInfoLoaded(info);
                         return;
                     }
                 }
             }
         };
-        getApk(context, afterLoad);
+        loadConfigByAllMeans(context, afterLoad);
     }
 
     public void loadLocalConfig(Context context) {
@@ -154,7 +154,7 @@ public class ConfigManager {
         mFetcher = fetcher;
     }
 
-    private void getApk(Context context, Runnable afterLoad) {
+    private void loadConfigByAllMeans(Context context, Runnable afterLoad) {
         if (null == afterLoad) {
             return;
         }
@@ -215,6 +215,6 @@ public class ConfigManager {
     }
 
     public interface LoadApkInfoListener {
-        void onApkLoaded(ApkInfo info);
+        void onApkInfoLoaded(ApkInfo info);
     }
 }

@@ -63,9 +63,9 @@ public class ResourceManager {
                 return;
             }
         }
-        ConfigManager.getInstance().getApkById(context, id, new ConfigManager.LoadApkInfoListener() {
+        ConfigManager.getInstance().getApkInfoById(context, id, new ConfigManager.LoadApkInfoListener() {
             @Override
-            public void onApkLoaded(final ApkInfo info) {
+            public void onApkInfoLoaded(final ApkInfo info) {
                 if (null == info) {
                     LogUtils.debug("no info");
                     listener.onResourceLoaded(null, info);

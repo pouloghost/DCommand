@@ -53,9 +53,9 @@ public class CommandManager {
                 return;
             }
         }
-        ConfigManager.getInstance().getApkByInterface(context, intf.getName(), new ConfigManager.LoadApkInfoListener() {
+        ConfigManager.getInstance().getApkInfoByInterface(context, intf.getName(), new ConfigManager.LoadApkInfoListener() {
             @Override
-            public void onApkLoaded(final ApkInfo info) {
+            public void onApkInfoLoaded(final ApkInfo info) {
                 if (null == info) {
                     LogUtils.debug("no info");
                     listener.onCommandLoaded(null);
