@@ -11,6 +11,7 @@ import java.io.File;
 
 import gt.research.dc.core.command.verifier.IApkVerifier;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
+import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.data.ApkInfo;
 import gt.research.dc.util.ApkUtils;
@@ -40,7 +41,7 @@ public class ResourceManager {
     }
 
     public static ResourceManager getInstance(DisplayMetrics metrics, Configuration configuration) {
-        if (null == sInstance) {
+        if (null == sInstance && null != metrics && null != configuration) {
             synchronized (ResourceManager.class) {
                 if (null == sInstance) {
                     sInstance = new ResourceManager(metrics, configuration);
@@ -111,6 +112,10 @@ public class ResourceManager {
 
     public void setVerifier(IApkVerifier mVerifier) {
         this.mVerifier = mVerifier;
+    }
+
+    public ICache getCache() {
+        return mCache;
     }
 
     public interface LoadResourceListener {

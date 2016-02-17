@@ -7,16 +7,14 @@ import java.io.File;
 import dalvik.system.DexClassLoader;
 import gt.research.dc.core.AbsCommand;
 import gt.research.dc.core.command.verifier.IApkVerifier;
-import gt.research.dc.core.command.verifier.OnVerifiedListener;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
+import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.data.ApkInfo;
 import gt.research.dc.util.ApkUtils;
 import gt.research.dc.util.CommandUtils;
 import gt.research.dc.util.FileUtils;
 import gt.research.dc.util.LogUtils;
-import gt.research.dc.util.NetUtils;
-import gt.research.dc.util.ResourceUtils;
 
 /**
  * Created by ayi.zty on 2016/1/26.
@@ -97,6 +95,10 @@ public class CommandManager {
 
     public void setVerifier(IApkVerifier mVerifier) {
         this.mVerifier = mVerifier;
+    }
+
+    public ICache getCache() {
+        return mCache;
     }
 
     public interface LoadCommandListener<T> {

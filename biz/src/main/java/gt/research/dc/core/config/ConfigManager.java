@@ -24,6 +24,7 @@ import gt.research.dc.core.db.Intf;
 import gt.research.dc.core.db.IntfDao;
 import gt.research.dc.data.ApkInfo;
 import gt.research.dc.data.Config;
+import gt.research.dc.util.CacheUtils;
 import gt.research.dc.util.FileUtils;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.VersionUtils;
@@ -141,7 +142,7 @@ public class ConfigManager {
                     mApkToDelete = config.delete;
                 }
                 saveConfigToDb(context);
-
+                CacheUtils.invalidateAll();
                 if (null != afterLoad) {
                     afterLoad.run();
                 }
@@ -209,6 +210,7 @@ public class ConfigManager {
             delete.executeDeleteWithoutDetachingEntities();
 
             FileUtils.deleteApk(context, id);
+            CacheUtils.invalidateCache(id);
         }
     }
 

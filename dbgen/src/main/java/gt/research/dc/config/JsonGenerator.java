@@ -1,4 +1,4 @@
-package gt.research.dc;
+package gt.research.dc.config;
 
 import com.alibaba.fastjson.JSON;
 

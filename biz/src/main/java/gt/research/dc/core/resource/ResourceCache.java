@@ -1,17 +1,17 @@
 package gt.research.dc.core.resource;
 
-import android.util.LruCache;
-
+import gt.research.dc.core.common.ICache;
+import gt.research.dc.core.common.LruCacheMap;
 import gt.research.dc.data.ApkInfo;
 
 /**
  * Created by ayi.zty on 2016/2/16.
  */
-public class ResourceCache {
-    private LruCache<String, Entry> mCache;
+public class ResourceCache implements ICache {
+    private LruCacheMap<String, Entry> mCache;
 
     public ResourceCache() {
-        mCache = new LruCache<>(6);
+        mCache = new LruCacheMap<>(6);
     }
 
     public Entry getCachedResource(String id) {
@@ -20,6 +20,16 @@ public class ResourceCache {
 
     public void onNewResource(ApkInfo info, ResourceFetcher fetcher) {
         mCache.put(info.id, new Entry(info, fetcher));
+    }
+
+    @Override
+    public void invalidate(String id) {
+        mCache.remove(id);
+    }
+
+    @Override
+    public void clear() {
+        mCache.evictAll();
     }
 
     public static class Entry {

@@ -53,6 +53,7 @@ public class ApkUtils {
                     LogUtils.debug("download done update");
                     info.pkgName = ResourceUtils.updateApkPackage(context, apkFile);
                 }
+                CacheUtils.invalidateCache(info.id);
                 if (null != afterLoad) {
                     afterLoad.run();
                 }

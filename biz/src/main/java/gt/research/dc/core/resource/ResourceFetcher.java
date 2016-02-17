@@ -1,5 +1,6 @@
 package gt.research.dc.core.resource;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
@@ -14,6 +15,7 @@ public class ResourceFetcher {
     private static final String sTypeDrawable = "drawable";
     private static final String sTypeId = "id";
     private static final String sTypeLayout = "layout";
+    private static final String sTypeAnimation = "ainmation";
 
     private String mPackage;
     private Resources mResources;
@@ -44,5 +46,9 @@ public class ResourceFetcher {
     public XmlPullParser getLayout(String name) {
         int id = mResources.getIdentifier(name, sTypeLayout, mPackage);
         return mResources.getLayout(id);
+    }
+
+    public AssetManager getAsset() {
+        return mResources.getAssets();
     }
 }
