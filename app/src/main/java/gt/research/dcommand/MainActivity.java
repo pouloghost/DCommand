@@ -1,7 +1,5 @@
 package gt.research.dcommand;
 
-import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,10 +8,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import gt.research.dc.core.IVersion;
+import gt.research.dc.core.command.CommandManager;
+import gt.research.dc.core.component.bean.ComponentsTable;
 import gt.research.dc.core.config.ConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
-import gt.research.dc.core.resource.ResourceFetcher;
-import gt.research.dc.core.resource.ResourceManager;
+import gt.research.dc.core.db.Comp;
+import gt.research.dc.util.FileUtils;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mVersion;
@@ -51,17 +52,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //get command
-//                CommandManager.getInstance().
-//                        getImplement(MainActivity.this, IVersion.class, new CommandManager.LoadCommandListener<IVersion>() {
-//                            @Override
-//                            public void onCommandLoaded(IVersion command) {
-//                                if(null == command){
-//                                    mVersion.setText("error");
-//                                    return;
-//                                }
-//                                mVersion.setText(command.getVersion());
-//                            }
-//                        });
+                CommandManager.getInstance().
+                        getImplement(MainActivity.this, IVersion.class, new CommandManager.LoadCommandListener<IVersion>() {
+                            @Override
+                            public void onCommandLoaded(IVersion command) {
+                                if (null == command) {
+                                    mVersion.setText("error");
+                                    return;
+                                }
+                                mVersion.setText(command.getVersion());
+                                ComponentsTable table = ComponentsTable.fromFile("IVersion",
+                                        FileUtils.getCacheApkFile(MainActivity.this, "IVersion").getAbsolutePath());
+                                Comp comp = table.getComponent("gt.research.export.MainActivity");
+                                mVersion.setText(comp.getComp());
+                            }
+                        });
 
                 //verify apk
 //                FileUtils.copy(Environment.getExternalStorageDirectory() + "/export.apk",
@@ -92,9 +97,12 @@ public class MainActivity extends AppCompatActivity {
 //                });
 
                 //load layout
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, DynamicLayoutActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.setClass(MainActivity.this, DynamicLayoutActivity.class);
+//                startActivity(intent);
+
+                //load dynamic activity
+
             }
         });
 

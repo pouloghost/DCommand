@@ -48,9 +48,6 @@ public class ApkDao extends AbstractDao<Apk, String> {
                 "\"URL\" TEXT NOT NULL ," + // 2: url
                 "\"LATEST\" INTEGER NOT NULL ," + // 3: latest
                 "\"PKG_NAME\" TEXT);"); // 4: pkgName
-        // Add Indexes
-        db.execSQL("CREATE INDEX " + constraint + "IDX_APK_ID ON APK" +
-                " (\"ID\");");
     }
 
     /** Drops the underlying database table. */

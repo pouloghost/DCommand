@@ -3,6 +3,8 @@ package gt.research.dc.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -42,6 +44,19 @@ public class BinaryXmlUtils {
                 } catch (IOException e) {
                     LogUtils.exception(e);
                 }
+            }
+        }
+        return null;
+    }
+
+    public static String readPackage(String manifest) {
+        Pattern reg = Pattern.compile("package=\"(.*?)\"");
+        Matcher matcher = reg.matcher(manifest);
+
+        if (matcher.find()) {
+            LogUtils.debug("count " + matcher.groupCount());
+            if (1 == matcher.groupCount()) {
+                return matcher.group(1);
             }
         }
         return null;

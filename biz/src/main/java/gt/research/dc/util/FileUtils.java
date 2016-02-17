@@ -86,8 +86,12 @@ public class FileUtils {
     }
 
     public static File getCacheApkFile(Context context, ApkInfo info) {
+        return getCacheApkFile(context, info.id);
+    }
+
+    public static File getCacheApkFile(Context context, String id) {
         File cacheDir = getCacheDir(context);
-        return new File(cacheDir, info.id + FileConstants.SUFFIX_APK);
+        return new File(cacheDir, id + FileConstants.SUFFIX_APK);
     }
 
     private static void closeStream(Closeable stream) {

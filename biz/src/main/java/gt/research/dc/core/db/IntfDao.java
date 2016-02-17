@@ -44,9 +44,6 @@ public class IntfDao extends AbstractDao<Intf, String> {
                 "\"INTF\" TEXT PRIMARY KEY NOT NULL ," + // 0: intf
                 "\"IMPL\" TEXT NOT NULL ," + // 1: impl
                 "\"APK\" TEXT NOT NULL );"); // 2: apk
-        // Add Indexes
-        db.execSQL("CREATE INDEX " + constraint + "IDX_INTF_INTF ON INTF" +
-                " (\"INTF\");");
     }
 
     /** Drops the underlying database table. */
