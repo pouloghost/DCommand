@@ -11,7 +11,6 @@ import org.xmlpull.v1.XmlPullParser;
 
 import gt.research.dc.core.resource.ResourceFetcher;
 import gt.research.dc.core.resource.ResourceManager;
-import gt.research.dc.data.ApkInfo;
 
 public class DynamicLayoutActivity extends AppCompatActivity {
 

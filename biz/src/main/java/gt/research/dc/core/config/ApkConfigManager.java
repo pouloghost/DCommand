@@ -25,7 +25,6 @@ import gt.research.dc.core.db.DaoMaster;
 import gt.research.dc.core.db.DaoSession;
 import gt.research.dc.core.db.Intf;
 import gt.research.dc.core.db.IntfDao;
-import gt.research.dc.data.ApkInfo;
 import gt.research.dc.data.Config;
 import gt.research.dc.util.CacheUtils;
 import gt.research.dc.util.FileUtils;

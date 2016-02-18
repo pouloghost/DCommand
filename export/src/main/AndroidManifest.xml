@@ -5,7 +5,10 @@
     <application
         android:allowBackup="true"
         android:supportsRtl="true">
-        <activity android:name=".MainActivity"></activity>
+        <meta-data
+            android:name="gt.research.dc.core.IVersion"
+            android:value="gt.research.export.VersionImpl" />
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

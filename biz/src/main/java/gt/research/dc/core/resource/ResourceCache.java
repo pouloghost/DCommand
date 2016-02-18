@@ -2,7 +2,6 @@ package gt.research.dc.core.resource;
 
 import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.common.LruCacheMap;
-import gt.research.dc.data.ApkInfo;
 
 /**
  * Created by ayi.zty on 2016/2/16.

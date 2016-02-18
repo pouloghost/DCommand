@@ -13,7 +13,6 @@ import gt.research.dc.core.command.verifier.IApkVerifier;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.config.ApkConfigManager;
-import gt.research.dc.data.ApkInfo;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.ReflectUtils;
 import gt.research.dc.util.ResourceUtils;

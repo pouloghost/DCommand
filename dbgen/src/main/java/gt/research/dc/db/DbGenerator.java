@@ -27,14 +27,14 @@ public class DbGenerator {
 
     private static void addIntf(Schema schema) {
         Entity intf = schema.addEntity("Intf");
-        intf.addStringProperty("intf").notNull().primaryKey();
+        intf.addStringProperty("intf").notNull();
         intf.addStringProperty("impl").notNull();
         intf.addStringProperty("apk").notNull();
     }
 
     private static void addComp(Schema schema) {
         Entity comp = schema.addEntity("Comp");
-        comp.addStringProperty("comp").notNull().primaryKey();
+        comp.addStringProperty("comp").notNull();
         comp.addStringProperty("apk").notNull();
         comp.addStringProperty("type").notNull();
     }

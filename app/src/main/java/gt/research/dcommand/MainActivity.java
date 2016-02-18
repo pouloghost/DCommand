@@ -13,7 +13,6 @@ import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
 import gt.research.dc.core.resource.ResourceFetcher;
 import gt.research.dc.core.resource.ResourceManager;
-import gt.research.dc.data.ApkInfo;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mVersion;

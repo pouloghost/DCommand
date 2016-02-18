@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import gt.research.dc.core.constant.FileConstants;
-import gt.research.dc.data.ApkInfo;
 
 /**
  * Created by ayi.zty on 2016/1/25.

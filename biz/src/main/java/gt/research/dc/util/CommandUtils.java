@@ -1,7 +1,6 @@
 package gt.research.dc.util;
 
 import gt.research.dc.core.AbsCommand;
-import gt.research.dc.data.ApkInfo;
 import gt.research.dc.data.CommandContext;
 
 /**
