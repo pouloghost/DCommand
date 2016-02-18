@@ -7,3 +7,5 @@
 /build
 /captures
 pic config.json
+*.apk
+export/export-release.apk

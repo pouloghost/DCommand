@@ -27,7 +27,7 @@ public class DbGenerator {
 
     private static void addIntf(Schema schema) {
         Entity intf = schema.addEntity("Intf");
-        intf.addStringProperty("intf").notNull().primaryKey();
+        intf.addStringProperty("intf").notNull();
         intf.addStringProperty("impl").notNull();
         intf.addStringProperty("apk").notNull();
     }
