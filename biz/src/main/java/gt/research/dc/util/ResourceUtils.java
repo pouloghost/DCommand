@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.io.File;
 
-import gt.research.dc.core.config.ConfigManager;
+import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.core.constant.DBConstants;
 import gt.research.dc.core.db.Apk;
 import gt.research.dc.core.db.ApkDao;
@@ -34,7 +34,7 @@ public class ResourceUtils {
         apkDao.insertOrReplace(apk);
 
         CacheUtils.invalidateCache(id);
-        ConfigManager.getInstance().loadLocalConfig(context);
+        ApkConfigManager.getInstance().loadLocalConfig(context);
 
         return pkgName;
     }

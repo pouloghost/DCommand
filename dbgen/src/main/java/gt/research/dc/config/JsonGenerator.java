@@ -20,8 +20,8 @@ public class JsonGenerator {
         Config config = new Config();
         ApkInfo apkInfo = new ApkInfo();
         apkInfo.id = "IVersion";
-        apkInfo.version = "1.1";
-        apkInfo.url = "https://os.alipayobjects.com/rmsportal/GHHFihJXSfWzMhg.apk";
+        apkInfo.url = "https://os.alipayobjects.com/rmsportal/UkkweRpRqckOHqu.apk";
+        apkInfo.timestamp = System.currentTimeMillis();
         apkInfo.interfaces = new HashMap<>();
         apkInfo.interfaces.put(IVersion.class.getName(), "gt.research.export.VersionImpl");
         config.update = Arrays.asList(apkInfo);

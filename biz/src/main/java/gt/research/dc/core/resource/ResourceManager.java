@@ -12,10 +12,8 @@ import java.io.File;
 import gt.research.dc.core.command.verifier.IApkVerifier;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.common.ICache;
-import gt.research.dc.core.config.ConfigManager;
+import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.data.ApkInfo;
-import gt.research.dc.util.ApkUtils;
-import gt.research.dc.util.FileUtils;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.ReflectUtils;
 import gt.research.dc.util.ResourceUtils;
@@ -63,45 +61,33 @@ public class ResourceManager {
                 return;
             }
         }
-        ConfigManager.getInstance().getApkInfoById(context, id, new ConfigManager.LoadApkInfoListener() {
+        ApkConfigManager.getInstance().getApkInfoAndFileById(context, id, mVerifier,
+                new ApkConfigManager.LoadApkInfoAndFileListener() {
             @Override
-            public void onApkInfoLoaded(final ApkInfo info) {
-                if (null == info) {
-                    LogUtils.debug("no info");
+            public void onApkInfoAndFileListener(ApkInfo info, File apkFile) {
+                if (!apkFile.exists()) {
                     listener.onResourceLoaded(null, info);
                     return;
                 }
-
-                final File apkFile = FileUtils.getCacheApkFile(context, info);
-                Runnable afterLoad = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!apkFile.exists()) {
-                            listener.onResourceLoaded(null, info);
-                            return;
-                        }
-                        if (TextUtils.isEmpty(info.pkgName)) {
-                            LogUtils.debug("empty package update");
-                            info.pkgName = ResourceUtils.updateApkPackage(context, apkFile);
-                        }
-                        if (TextUtils.isEmpty(info.pkgName)) {
-                            listener.onResourceLoaded(null, info);
-                            return;
-                        }
-                        try {
-                            AssetManager assetManager = AssetManager.class.newInstance();
-                            ReflectUtils.invokeMethod(assetManager, "addAssetPath",
-                                    new Class[]{String.class}, new Object[]{apkFile.getAbsolutePath()});
-                            ResourceFetcher fetcher = new ResourceFetcher(info.pkgName, new Resources(assetManager, mMetrics, mConfiguration));
-                            mCache.onNewResource(info, fetcher);
-                            listener.onResourceLoaded(fetcher, info);
-                        } catch (Throwable throwable) {
-                            LogUtils.exception(throwable);
-                            listener.onResourceLoaded(null, info);
-                        }
-                    }
-                };
-                ApkUtils.downloadAndVerifyApk(context, info, apkFile, afterLoad, mVerifier);
+                if (TextUtils.isEmpty(info.pkgName)) {
+                    LogUtils.debug("empty package update");
+                    info.pkgName = ResourceUtils.updateApkPackage(context, apkFile);
+                }
+                if (TextUtils.isEmpty(info.pkgName)) {
+                    listener.onResourceLoaded(null, info);
+                    return;
+                }
+                try {
+                    AssetManager assetManager = AssetManager.class.newInstance();
+                    ReflectUtils.invokeMethod(assetManager, "addAssetPath",
+                            new Class[]{String.class}, new Object[]{apkFile.getAbsolutePath()});
+                    ResourceFetcher fetcher = new ResourceFetcher(info.pkgName, new Resources(assetManager, mMetrics, mConfiguration));
+                    mCache.onNewResource(info, fetcher);
+                    listener.onResourceLoaded(fetcher, info);
+                } catch (Throwable throwable) {
+                    LogUtils.exception(throwable);
+                    listener.onResourceLoaded(null, info);
+                }
             }
         });
     }

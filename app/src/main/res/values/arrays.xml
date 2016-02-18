@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="urls">
-        <item>https://os.alipayobjects.com/rmsportal/hKUWuootdRarcbi.json</item>
-        <item>https://os.alipayobjects.com/rmsportal/pjCxtYCQkxdhIup.json</item>
-        <item>https://os.alipayobjects.com/rmsportal/BXVvgyMNQzoZSFY.json</item>
-        <item>https://os.alipayobjects.com/rmsportal/WutrouNyySLxLQx.json</item>
+        <item>https://os.alipayobjects.com/rmsportal/xrzeTpZUwaONAJq.json</item>
     </string-array>
 </resources>

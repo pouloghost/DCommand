@@ -1,5 +1,6 @@
 package gt.research.dcommand;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -8,13 +9,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import gt.research.dc.core.IVersion;
-import gt.research.dc.core.command.CommandManager;
-import gt.research.dc.core.component.bean.ComponentsTable;
-import gt.research.dc.core.config.ConfigManager;
+import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
-import gt.research.dc.core.db.Comp;
-import gt.research.dc.util.FileUtils;
+import gt.research.dc.core.resource.ResourceFetcher;
+import gt.research.dc.core.resource.ResourceManager;
+import gt.research.dc.data.ApkInfo;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mVersion;
@@ -31,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         mUrl = (Spinner) findViewById(R.id.url);
         mFetcher = new NetFileFetcher();
 
-        final ConfigManager configManager = ConfigManager.getInstance();
-        configManager.setConfigFetcher(mFetcher);
+        final ApkConfigManager apkConfigManager = ApkConfigManager.getInstance();
+        apkConfigManager.setConfigFetcher(mFetcher);
 
         mUrl.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -52,21 +51,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //get command
-                CommandManager.getInstance().
-                        getImplement(MainActivity.this, IVersion.class, new CommandManager.LoadCommandListener<IVersion>() {
-                            @Override
-                            public void onCommandLoaded(IVersion command) {
-                                if (null == command) {
-                                    mVersion.setText("error");
-                                    return;
-                                }
-                                mVersion.setText(command.getVersion());
-                                ComponentsTable table = ComponentsTable.fromFile("IVersion",
-                                        FileUtils.getCacheApkFile(MainActivity.this, "IVersion").getAbsolutePath());
-                                Comp comp = table.getComponent("gt.research.export.MainActivity");
-                                mVersion.setText(comp.getComp());
-                            }
-                        });
+//                CommandManager.getInstance().
+//                        getImplement(MainActivity.this, IVersion.class, new CommandManager.LoadCommandListener<IVersion>() {
+//                            @Override
+//                            public void onCommandLoaded(IVersion command) {
+//                                if (null == command) {
+//                                    mVersion.setText("error");
+//                                    return;
+//                                }
+//                                mVersion.setText(command.getVersion());
+//                                ComponentsTable table = ComponentsTable.fromFile("IVersion",
+//                                        FileUtils.getCacheApkFile(MainActivity.this, "IVersion").getAbsolutePath());
+//                                Comp comp = table.getComponent("gt.research.export.MainActivity");
+//                                mVersion.setText(comp.getComp());
+//                            }
+//                        });
 
                 //verify apk
 //                FileUtils.copy(Environment.getExternalStorageDirectory() + "/export.apk",
@@ -82,19 +81,19 @@ public class MainActivity extends AppCompatActivity {
 //                LogUtils.debug(getApplicationInfo().sourceDir);
 
                 //load resource
-//                Resources res = getResources();
-//                ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
-//                resourceManager.loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
-//                    @Override
-//                    public void onResourceLoaded(ResourceFetcher fetcher) {
-//                        if (null == fetcher) {
-//                            mVersion.setText("error");
-//                            return;
-//                        }
-//                        mVersion.setText(fetcher.getString("test"));
-//                        mImage.setImageDrawable(fetcher.getDrawable("test"));
-//                    }
-//                });
+                Resources res = getResources();
+                ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
+                resourceManager.loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
+                    @Override
+                    public void onResourceLoaded(ResourceFetcher fetcher, ApkInfo info) {
+                        if (null == fetcher) {
+                            mVersion.setText("error");
+                            return;
+                        }
+                        mVersion.setText(fetcher.getString("test"));
+                        mImage.setImageDrawable(fetcher.getDrawable("test"));
+                    }
+                });
 
                 //load layout
 //                Intent intent = new Intent();
@@ -109,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.updateConfig).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ConfigManager.getInstance().updateConfig(MainActivity.this, null);
+                ApkConfigManager.getInstance().updateConfig(MainActivity.this, null);
             }
         });
     }
