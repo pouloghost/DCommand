@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
+import gt.research.dc.core.db.Apk;
 import gt.research.dc.core.resource.ResourceFetcher;
 import gt.research.dc.core.resource.ResourceManager;
 
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                         ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
                         resourceManager.loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
                             @Override
-                            public void onResourceLoaded(ResourceFetcher fetcher, ApkInfo info) {
+                            public void onResourceLoaded(ResourceFetcher fetcher, Apk info) {
                                 if (null == fetcher) {
                                     mVersion.setText("error");
                                     return;

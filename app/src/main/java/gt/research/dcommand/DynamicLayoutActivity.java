@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import gt.research.dc.core.db.Apk;
 import gt.research.dc.core.resource.ResourceFetcher;
 import gt.research.dc.core.resource.ResourceManager;
 
@@ -22,7 +23,7 @@ public class DynamicLayoutActivity extends AppCompatActivity {
         ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
         resourceManager.loadResource(this, "IVersion", true, new ResourceManager.LoadResourceListener() {
             @Override
-            public void onResourceLoaded(ResourceFetcher fetcher, ApkInfo info) {
+            public void onResourceLoaded(ResourceFetcher fetcher, Apk info) {
                 if (null == fetcher) {
                     finish();
                     return;
