@@ -34,7 +34,7 @@ public class CommandCache implements ICache {
     public void invalidate(String id) {
         for (Class clazz : mCache.keySet()){
             Entry entry = mCache.get(clazz);
-            if(TextUtils.equals(entry.context.apkInfo.id, id)){
+            if(TextUtils.equals(entry.context.apkInfo.getId(), id)){
                 mCache.remove(clazz);
             }
         }

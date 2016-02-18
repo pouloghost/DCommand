@@ -13,6 +13,7 @@ import gt.research.dc.core.command.verifier.IApkVerifier;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.config.ApkConfigManager;
+import gt.research.dc.core.db.Apk;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.ReflectUtils;
 import gt.research.dc.util.ResourceUtils;
@@ -63,16 +64,16 @@ public class ResourceManager {
         ApkConfigManager.getInstance().getApkInfoAndFileById(context, id, mVerifier,
                 new ApkConfigManager.LoadApkInfoAndFileListener() {
             @Override
-            public void onApkInfoAndFileListener(ApkInfo info, File apkFile) {
+            public void onApkInfoAndFileListener(Apk info, File apkFile) {
                 if (!apkFile.exists()) {
                     listener.onResourceLoaded(null, info);
                     return;
                 }
-                if (TextUtils.isEmpty(info.pkgName)) {
+                if (TextUtils.isEmpty(info.getPkgName())) {
                     LogUtils.debug("empty package update");
-                    info.pkgName = ResourceUtils.updateApkPackage(context, apkFile);
+                    info.setPkgName(ResourceUtils.updateApkPackage(context, apkFile));
                 }
-                if (TextUtils.isEmpty(info.pkgName)) {
+                if (TextUtils.isEmpty(info.getPkgName())) {
                     listener.onResourceLoaded(null, info);
                     return;
                 }
@@ -80,7 +81,7 @@ public class ResourceManager {
                     AssetManager assetManager = AssetManager.class.newInstance();
                     ReflectUtils.invokeMethod(assetManager, "addAssetPath",
                             new Class[]{String.class}, new Object[]{apkFile.getAbsolutePath()});
-                    ResourceFetcher fetcher = new ResourceFetcher(info.pkgName, new Resources(assetManager, mMetrics, mConfiguration));
+                    ResourceFetcher fetcher = new ResourceFetcher(info.getPkgName(), new Resources(assetManager, mMetrics, mConfiguration));
                     mCache.onNewResource(info, fetcher);
                     listener.onResourceLoaded(fetcher, info);
                 } catch (Throwable throwable) {
@@ -100,6 +101,6 @@ public class ResourceManager {
     }
 
     public interface LoadResourceListener {
-        void onResourceLoaded(ResourceFetcher fetcher, ApkInfo info);
+        void onResourceLoaded(ResourceFetcher fetcher, Apk info);
     }
 }

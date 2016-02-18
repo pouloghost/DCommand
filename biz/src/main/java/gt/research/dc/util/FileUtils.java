@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import gt.research.dc.core.constant.FileConstants;
+import gt.research.dc.core.db.Apk;
 
 /**
  * Created by ayi.zty on 2016/1/25.
@@ -88,8 +89,8 @@ public class FileUtils {
         return sCacheDir;
     }
 
-    public static File getCacheApkFile(Context context, ApkInfo info) {
-        return getCacheApkFile(context, info.id);
+    public static File getCacheApkFile(Context context, Apk info) {
+        return getCacheApkFile(context, info.getId());
     }
 
     public static File getCacheApkFile(Context context, String id) {

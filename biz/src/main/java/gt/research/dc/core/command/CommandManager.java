@@ -10,6 +10,7 @@ import gt.research.dc.core.command.verifier.IApkVerifier;
 import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.config.ApkConfigManager;
+import gt.research.dc.core.db.Apk;
 import gt.research.dc.util.CommandUtils;
 import gt.research.dc.util.LogUtils;
 
@@ -53,7 +54,7 @@ public class CommandManager {
         ApkConfigManager.getInstance().getApkInfoAndFileByInterface(context, intf.getName(), mVerifier,
                 new ApkConfigManager.LoadApkInfoAndFileListener() {
                     @Override
-                    public void onApkInfoAndFileListener(ApkInfo info, File apkFile) {
+                    public void onApkInfoAndFileListener(Apk info, File apkFile) {
                         if (!apkFile.exists()) {
                             LogUtils.debug("download fail");
                             listener.onCommandLoaded(null);

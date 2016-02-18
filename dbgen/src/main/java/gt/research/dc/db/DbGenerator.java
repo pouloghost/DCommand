@@ -5,7 +5,7 @@ import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Schema;
 
 public class DbGenerator {
-    private static final String sDbRoot = "D:\\Workbench\\DCommand\\biz\\src\\main\\java";
+    private static final String sDbRoot = "D:\\Workbench\\DCommand\\api\\src\\main\\java";
 
     public static void main(String[] args) throws Exception {
         Schema schema = new Schema(1, "gt.research.dc.core.db");

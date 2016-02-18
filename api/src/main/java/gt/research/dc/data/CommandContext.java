@@ -1,5 +1,7 @@
 package gt.research.dc.data;
 
+import gt.research.dc.core.db.Apk;
+
 /**
  * Created by ayi.zty on 2016/1/26.
  */

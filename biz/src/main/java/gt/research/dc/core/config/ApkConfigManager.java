@@ -38,7 +38,7 @@ import gt.research.dc.util.ResourceUtils;
 public class ApkConfigManager {
     private volatile static ApkConfigManager sInstance;
 
-    private HashMap<String, ApkInfo> mInterfaceIndex;
+    private HashMap<String, Apk> mInterfaceIndex;
     private IConfigFetcher mFetcher;
     private List<String> mApkToDelete;
 
@@ -68,7 +68,7 @@ public class ApkConfigManager {
         Runnable afterLoad = new Runnable() {
             @Override
             public void run() {
-                ApkInfo info = mInterfaceIndex.get(intf);
+                Apk info = mInterfaceIndex.get(intf);
                 listener.onApkInfoLoaded(info);
             }
         };
@@ -82,8 +82,8 @@ public class ApkConfigManager {
         Runnable afterLoad = new Runnable() {
             @Override
             public void run() {
-                for (ApkInfo info : mInterfaceIndex.values()) {
-                    if (TextUtils.equals(id, info.id)) {
+                for (Apk info : mInterfaceIndex.values()) {
+                    if (TextUtils.equals(id, info.getId())) {
                         listener.onApkInfoLoaded(info);
                         return;
                     }
@@ -100,7 +100,7 @@ public class ApkConfigManager {
         }
         getApkInfoByInterface(context, intf, new LoadApkInfoListener() {
             @Override
-            public void onApkInfoLoaded(final ApkInfo info) {
+            public void onApkInfoLoaded(final Apk info) {
                 if (null == info) {
                     listener.onApkInfoAndFileListener(null, null);
                     return;
@@ -118,13 +118,13 @@ public class ApkConfigManager {
     }
 
     public void getApkInfoAndFileById(final Context context, final String intf, final IApkVerifier verifier,
-                                      final LoadApkInfoAndFileListener listener){
+                                      final LoadApkInfoAndFileListener listener) {
         if (null == listener) {
             return;
         }
         getApkInfoById(context, intf, new LoadApkInfoListener() {
             @Override
-            public void onApkInfoLoaded(final ApkInfo info) {
+            public void onApkInfoLoaded(final Apk info) {
                 if (null == info) {
                     listener.onApkInfoAndFileListener(null, null);
                     return;
@@ -140,6 +140,7 @@ public class ApkConfigManager {
             }
         });
     }
+
     public void loadLocalConfig(Context context) {
         mInterfaceIndex = null;
         SQLiteOpenHelper helper = new DaoMaster.DevOpenHelper(context, DBConstants.DB_FILE_CONFIG, null);
@@ -149,15 +150,16 @@ public class ApkConfigManager {
         IntfDao intfDao = session.getIntfDao();
 
         List<Apk> apks = apkDao.loadAll();
-        Map<String, ApkInfo> apkInfos = new HashMap<>();
+        Map<String, Apk> apkInfos = new HashMap<>();
         for (Apk apk : apks) {
-            ApkInfo apkInfo = new ApkInfo();
-            apkInfo.interfaces = new HashMap<>();
-            apkInfo.id = apk.getId();
-            apkInfo.url = apk.getUrl();
-            apkInfo.pkgName = apk.getPkgName();
-            apkInfo.timestamp = apk.getTimestamp();
-            apkInfos.put(apkInfo.id, apkInfo);
+            Apk apkInfo = new Apk();
+            // TODO: 2016/2/18 fix
+//            apkInfo.interfaces = new HashMap<>();
+//            apkInfo.id = apk.getId();
+//            apkInfo.url = apk.getUrl();
+//            apkInfo.pkgName = apk.getPkgName();
+//            apkInfo.timestamp = apk.getTimestamp();
+//            apkInfos.put(apkInfo.id, apkInfo);
         }
 
         List<Intf> intfs = intfDao.loadAll();
@@ -166,9 +168,10 @@ public class ApkConfigManager {
         }
         mInterfaceIndex = new HashMap<>();
         for (Intf intf : intfs) {
-            ApkInfo apkInfo = apkInfos.get(intf.getApk());
+            Apk apkInfo = apkInfos.get(intf.getApk());
             if (null != apkInfo) {
-                apkInfo.interfaces.put(intf.getIntf(), intf.getImpl());
+                // TODO: 2016/2/18 fix
+//                apkInfo.interfaces.put(intf.getIntf(), intf.getImpl());
                 mInterfaceIndex.put(intf.getIntf(), apkInfo);
             }
         }
@@ -181,15 +184,16 @@ public class ApkConfigManager {
                 if (null == config) {
                     return;
                 }
-                List<ApkInfo> apkInfos = config.update;
+                List<Apk> apkInfos = config.update;
                 if (null != apkInfos) {
                     mInterfaceIndex = new HashMap<>();
-                    for (ApkInfo apkInfo : apkInfos) {
-                        for (String intf : apkInfo.interfaces.keySet()) {
-                            mInterfaceIndex.put(intf, apkInfo);
-                        }
+                    for (Apk apkInfo : apkInfos) {
+                        // TODO: 2016/2/18 fix
+//                        for (String intf : apkInfo.interfaces.keySet()) {
+//                            mInterfaceIndex.put(intf, apkInfo);
+//                        }
                     }
-                    LogUtils.debug(apkInfos.get(0).id);
+                    LogUtils.debug(apkInfos.get(0).getId());
                 }
                 if (null != config.delete) {
                     mApkToDelete = config.delete;
@@ -231,19 +235,18 @@ public class ApkConfigManager {
     }
 
     private void updateDb() {
-        HashSet<ApkInfo> apkInfos = new HashSet<>();
+        HashSet<Apk> apkInfos = new HashSet<>();
 
         for (String intf : mInterfaceIndex.keySet()) {
-            ApkInfo apkInfo = mInterfaceIndex.get(intf);
+            Apk apkInfo = mInterfaceIndex.get(intf);
             apkInfos.add(apkInfo);
-            Intf intfEntity = new Intf(intf, apkInfo.getImplement(intf), apkInfo.id);
-            mIntfDao.insertOrReplace(intfEntity);
+            // FIXME: 2016/2/18
+//            Intf intfEntity = new Intf(intf, apkInfo.getImplement(intf), apkInfo.id);
+//            mIntfDao.insertOrReplace(intfEntity);
         }
 
-        for (ApkInfo apkInfo : apkInfos) {
-            Apk old = mApkDao.load(apkInfo.id);
-            Apk apk = new Apk(apkInfo.id, apkInfo.url, apkInfo.pkgName, apkInfo.timestamp);
-            mApkDao.insertOrReplace(apk);
+        for (Apk apkInfo : apkInfos) {
+            mApkDao.insertOrReplace(apkInfo);
         }
     }
 
@@ -271,15 +274,15 @@ public class ApkConfigManager {
         }
     }
 
-    private void downloadAndVerifyApk(final Context context, final ApkInfo info, final File apkFile,
-                                     final IApkVerifier verifier, final Runnable afterLoad) {
-        if (info.timestamp < apkFile.lastModified()) {
+    private void downloadAndVerifyApk(final Context context, final Apk info, final File apkFile,
+                                      final IApkVerifier verifier, final Runnable afterLoad) {
+        if (info.getTimestamp() < apkFile.lastModified()) {
             if (null != afterLoad) {
                 afterLoad.run();
             }
             return;
         }
-        NetUtils.download(context, info.url, new NetUtils.DownloadListener() {
+        NetUtils.download(context, info.getUrl(), new NetUtils.DownloadListener() {
             @Override
             public void onEnqueue(String url) {
 
@@ -304,7 +307,7 @@ public class ApkConfigManager {
         });
     }
 
-    private void onFileGot(final Context context, final String file, final File apkFile, final ApkInfo info,
+    private void onFileGot(final Context context, final String file, final File apkFile, final Apk info,
                            final Runnable afterLoad, final boolean updatePackage, final IApkVerifier verifier) {
         OnVerifiedListener listener = new OnVerifiedListener() {
             @Override
@@ -316,9 +319,9 @@ public class ApkConfigManager {
                 }
                 if (updatePackage && apkFile.exists()) {
                     LogUtils.debug("download done update");
-                    info.pkgName = ResourceUtils.updateApkPackage(context, apkFile);
+                    info.setPkgName(ResourceUtils.updateApkPackage(context, apkFile));
                 }
-                CacheUtils.invalidateCache(info.id);
+                CacheUtils.invalidateCache(info.getId());
                 if (null != afterLoad) {
                     afterLoad.run();
                 }
@@ -332,10 +335,10 @@ public class ApkConfigManager {
     }
 
     public interface LoadApkInfoListener {
-        void onApkInfoLoaded(ApkInfo info);
+        void onApkInfoLoaded(Apk info);
     }
 
     public interface LoadApkInfoAndFileListener {
-        void onApkInfoAndFileListener(ApkInfo info, File apkFile);
+        void onApkInfoAndFileListener(Apk info, File apkFile);
     }
 }

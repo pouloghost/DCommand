@@ -2,6 +2,7 @@ package gt.research.dc.core.resource;
 
 import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.common.LruCacheMap;
+import gt.research.dc.core.db.Apk;
 
 /**
  * Created by ayi.zty on 2016/2/16.
@@ -17,8 +18,8 @@ public class ResourceCache implements ICache {
         return mCache.get(id);
     }
 
-    public void onNewResource(ApkInfo info, ResourceFetcher fetcher) {
-        mCache.put(info.id, new Entry(info, fetcher));
+    public void onNewResource(Apk info, ResourceFetcher fetcher) {
+        mCache.put(info.getId(), new Entry(info, fetcher));
     }
 
     @Override
@@ -33,9 +34,9 @@ public class ResourceCache implements ICache {
 
     public static class Entry {
         public ResourceFetcher fetcher;
-        public ApkInfo info;
+        public Apk info;
 
-        public Entry(ApkInfo apkInfo, ResourceFetcher resourceFetcher) {
+        public Entry(Apk apkInfo, ResourceFetcher resourceFetcher) {
             fetcher = resourceFetcher;
             info = apkInfo;
         }

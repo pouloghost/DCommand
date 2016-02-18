@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Arrays;
 
-import gt.research.dc.data.Apk;
+import gt.research.dc.core.db.Apk;
 import gt.research.dc.data.Config;
 
 /**
