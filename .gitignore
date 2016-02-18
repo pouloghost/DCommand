@@ -6,3 +6,4 @@
 .DS_Store
 /build
 /captures
+pic config.json
