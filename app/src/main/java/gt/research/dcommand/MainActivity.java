@@ -19,11 +19,17 @@ public class MainActivity extends AppCompatActivity {
     private TextView mVersion;
     private ImageView mImage;
     private Spinner mUrl;
+
+    private int mSelectedId;
     private NetFileFetcher mFetcher;
+    private Runnable[] mCommands;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initCommands();
+
         setContentView(R.layout.activity_main);
         mVersion = (TextView) findViewById(R.id.version);
         mImage = (ImageView) findViewById(R.id.image);
@@ -36,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
         mUrl.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String url = (String) parent.getAdapter().getItem((int) id);
+                mSelectedId = (int) id;
+                String url = (String) parent.getAdapter().getItem(mSelectedId);
                 mFetcher.setUrl(url);
             }
 
@@ -50,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.call).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (null == mCommands || mCommands.length <= mSelectedId) {
+                    return;
+                }
+                mCommands[mSelectedId].run();
                 //get command
 //                CommandManager.getInstance().
 //                        getImplement(MainActivity.this, IVersion.class, new CommandManager.LoadCommandListener<IVersion>() {
@@ -80,21 +91,6 @@ public class MainActivity extends AppCompatActivity {
 //                new OriginalVerifier().getLocalSignature(MainActivity.this);
 //                LogUtils.debug(getApplicationInfo().sourceDir);
 
-                //load resource
-                Resources res = getResources();
-                ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
-                resourceManager.loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
-                    @Override
-                    public void onResourceLoaded(ResourceFetcher fetcher, ApkInfo info) {
-                        if (null == fetcher) {
-                            mVersion.setText("error");
-                            return;
-                        }
-                        mVersion.setText(fetcher.getString("test"));
-                        mImage.setImageDrawable(fetcher.getDrawable("test"));
-                    }
-                });
-
                 //load layout
 //                Intent intent = new Intent();
 //                intent.setClass(MainActivity.this, DynamicLayoutActivity.class);
@@ -111,5 +107,29 @@ public class MainActivity extends AppCompatActivity {
                 ApkConfigManager.getInstance().updateConfig(MainActivity.this, null);
             }
         });
+    }
+
+    private void initCommands() {
+        mCommands = new Runnable[]{
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        //load resource
+                        Resources res = getResources();
+                        ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
+                        resourceManager.loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
+                            @Override
+                            public void onResourceLoaded(ResourceFetcher fetcher, ApkInfo info) {
+                                if (null == fetcher) {
+                                    mVersion.setText("error");
+                                    return;
+                                }
+                                mVersion.setText(fetcher.getString("test"));
+                                mImage.setImageDrawable(fetcher.getDrawable("test"));
+                            }
+                        });
+                    }
+                }
+        };
     }
 }
