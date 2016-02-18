@@ -1,5 +1,6 @@
-package gt.research.dc.core.component;
+package gt.research.dc.core.component.bean;
 
+import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -8,9 +9,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import gt.research.dc.core.db.Comp;
 import gt.research.dc.util.BinaryXmlUtils;
@@ -24,7 +23,7 @@ public class ComponentsTable {
     private static final String sTagActivity = "activity";
     private static final String sAttrName = "name";
 
-    private List<Comp> mActivities;
+    private Map<String, Comp> mActivities;
     private String mApkId;
 
     private ComponentsTable() {
@@ -44,8 +43,8 @@ public class ComponentsTable {
         return table;
     }
 
-    public Collection<Comp> getActivities() {
-        return mActivities;
+    public Comp getComponent(String pkg) {
+        return mActivities.get(pkg);
     }
 
     private void loadManifest(String manifest) {
@@ -62,7 +61,7 @@ public class ComponentsTable {
                         switch (parser.getName()) {
                             case sTagActivity:
                                 Comp comp = getComp(parser, pkg, sTagActivity);
-                                mActivities.add(comp);
+                                mActivities.put(comp.getComp(), comp);
                                 break;
                             case sTagApplication:
                                 clearMem();
@@ -96,6 +95,6 @@ public class ComponentsTable {
     }
 
     private void clearMem() {
-        mActivities = new ArrayList<>();
+        mActivities = new ArrayMap<>();
     }
 }

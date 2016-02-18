@@ -2,7 +2,6 @@ package gt.research.dcommand;
 
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,15 +9,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.File;
-
 import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
 import gt.research.dc.core.resource.ResourceFetcher;
 import gt.research.dc.core.resource.ResourceManager;
 import gt.research.dc.data.ApkInfo;
-import gt.research.dc.util.BinaryXmlUtils;
-import gt.research.dc.util.LogUtils;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mVersion;
@@ -62,11 +57,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.call).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (null == mCommands || mCommands.length <= mSelectedId) {
-//                    return;
-//                }
-//                mCommands[mSelectedId].run();
-                LogUtils.debug(BinaryXmlUtils.readManifest(new File(Environment.getExternalStorageDirectory(), "export.apk").getAbsolutePath()));
+                if (null == mCommands || mCommands.length <= mSelectedId) {
+                    return;
+                }
+                mCommands[mSelectedId].run();
                 //get command
 //                CommandManager.getInstance().
 //                        getImplement(MainActivity.this, IVersion.class, new CommandManager.LoadCommandListener<IVersion>() {
