@@ -71,7 +71,7 @@ public class ComponentsTable {
                 eventType = parser.next();
             }
         } catch (XmlPullParserException | IOException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(ComponentsTable.this, e);
         }
     }
 

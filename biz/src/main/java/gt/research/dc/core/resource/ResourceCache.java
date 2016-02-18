@@ -19,7 +19,7 @@ public class ResourceCache implements ICache {
     }
 
     public void onNewResource(Apk info, ResourceFetcher fetcher) {
-        mCache.put(info.getId(), new Entry(info, fetcher));
+        mCache.put(info.getApk(), new Entry(info, fetcher));
     }
 
     @Override

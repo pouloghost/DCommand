@@ -3,9 +3,10 @@ package gt.research.dc.core.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.Map;
-
 import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.query.DeleteQuery;
+import de.greenrobot.dao.query.QueryBuilder;
+import de.greenrobot.dao.query.WhereCondition;
 import gt.research.dc.core.constant.DBConstants;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.ReflectUtils;
@@ -18,7 +19,8 @@ public class DbManager {
     private volatile static DbManager sInstance;
 
     private DaoSession mSession;
-    private Map<String, AbstractDao> mDaos;
+    private final Class[] mEntities = new Class[]{Apk.class, Intf.class, Comp.class};
+    private final String[] mKeys = new String[]{"APK", "APK", "APK"};
 
     private DbManager(Context context) {
         SQLiteOpenHelper helper = new DaoMaster.DevOpenHelper(context, DBConstants.DB_FILE_CONFIG, null);
@@ -43,8 +45,28 @@ public class DbManager {
         try {
             dao = (T) ReflectUtils.invokeMethod(mSession, getter);
         } catch (Throwable throwable) {
-            LogUtils.exception(throwable);
+            LogUtils.exception(DbManager.this, throwable);
         }
         return dao;
+    }
+
+    public boolean deleteDataByApkId(String id) {
+        boolean success = true;
+        for (int i = 0; i < mEntities.length; ++i) {
+            AbstractDao dao = getDao(mEntities[i]);
+            if (null == dao) {
+                success = false;
+                continue;
+            }
+            deleteDataByApkIdInDb(id, mKeys[i], dao);
+        }
+        return success;
+    }
+
+    private void deleteDataByApkIdInDb(String id, String key, AbstractDao dao) {
+        QueryBuilder queryBuilder = dao.queryBuilder();
+        queryBuilder.where(new WhereCondition.StringCondition(key + " = '" + id + "'"));
+        DeleteQuery delete = queryBuilder.buildDelete();
+        delete.executeDeleteWithoutDetachingEntities();
     }
 }

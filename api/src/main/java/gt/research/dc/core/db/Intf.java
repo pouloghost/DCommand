@@ -16,10 +16,6 @@ public class Intf {
     public Intf() {
     }
 
-    public Intf(String intf) {
-        this.intf = intf;
-    }
-
     public Intf(String intf, String impl, String apk) {
         this.intf = intf;
         this.impl = impl;

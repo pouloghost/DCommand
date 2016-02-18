@@ -19,7 +19,7 @@ public class DbGenerator {
 
     private static void addApk(Schema schema) {
         Entity apk = schema.addEntity("Apk");
-        apk.addStringProperty("id").notNull().primaryKey();
+        apk.addStringProperty("apk").notNull().primaryKey();
         apk.addStringProperty("url").notNull();
         apk.addStringProperty("pkgName");
         apk.addLongProperty("timestamp").notNull();

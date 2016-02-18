@@ -6,8 +6,8 @@ import java.io.File;
 
 import dalvik.system.DexClassLoader;
 import gt.research.dc.core.AbsCommand;
-import gt.research.dc.core.command.verifier.IApkVerifier;
-import gt.research.dc.core.command.verifier.original.OriginalVerifier;
+import gt.research.dc.core.config.verifier.IApkVerifier;
+import gt.research.dc.core.config.verifier.original.OriginalVerifier;
 import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.core.db.Apk;
@@ -51,22 +51,22 @@ public class CommandManager {
                 return;
             }
         }
-        ApkConfigManager.getInstance().getApkInfoAndFileByInterface(context, intf.getName(), mVerifier,
-                new ApkConfigManager.LoadApkInfoAndFileListener() {
-                    @Override
-                    public void onApkInfoAndFileListener(Apk info, File apkFile) {
-                        if (!apkFile.exists()) {
-                            LogUtils.debug("download fail");
-                            listener.onCommandLoaded(null);
-                            return;
-                        }
-                        DexClassLoader dexClassLoader = new DexClassLoader(apkFile.getAbsolutePath(),
-                                apkFile.getParent(), null, context.getClassLoader());
-                        T command = CommandUtils.constructCommand(intf, info, dexClassLoader);
-                        mCache.onNewCommand(intf, command);
-                        listener.onCommandLoaded(command);
-                    }
-                });
+//        ApkConfigManager.getInstance().getApkInfoAndFileByInterface(context, intf.getName(), mVerifier,
+//                new ApkConfigManager.LoadApkInfoAndFileListener() {
+//                    @Override
+//                    public void onApkInfoAndFile(Apk info, File apkFile) {
+//                        if (!apkFile.exists()) {
+//                            LogUtils.debug("download fail");
+//                            listener.onCommandLoaded(null);
+//                            return;
+//                        }
+//                        DexClassLoader dexClassLoader = new DexClassLoader(apkFile.getAbsolutePath(),
+//                                apkFile.getParent(), null, context.getClassLoader());
+//                        T command = CommandUtils.constructCommand(intf, info, dexClassLoader);
+//                        mCache.onNewCommand(intf, command);
+//                        listener.onCommandLoaded(command);
+//                    }
+//                });
     }
 
     public <T extends AbsCommand> void getImplement(final Context context, final Class<T> intf,

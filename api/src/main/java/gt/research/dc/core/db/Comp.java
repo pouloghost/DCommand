@@ -16,10 +16,6 @@ public class Comp {
     public Comp() {
     }
 
-    public Comp(String comp) {
-        this.comp = comp;
-    }
-
     public Comp(String comp, String apk, String type) {
         this.comp = comp;
         this.apk = apk;

@@ -9,10 +9,10 @@ import android.util.DisplayMetrics;
 
 import java.io.File;
 
-import gt.research.dc.core.command.verifier.IApkVerifier;
-import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.config.ApkConfigManager;
+import gt.research.dc.core.config.verifier.IApkVerifier;
+import gt.research.dc.core.config.verifier.original.OriginalVerifier;
 import gt.research.dc.core.db.Apk;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.ReflectUtils;
@@ -61,35 +61,35 @@ public class ResourceManager {
                 return;
             }
         }
-        ApkConfigManager.getInstance().getApkInfoAndFileById(context, id, mVerifier,
+        ApkConfigManager.getInstance().getApkInfoAndFileById(context, id, false,
                 new ApkConfigManager.LoadApkInfoAndFileListener() {
-            @Override
-            public void onApkInfoAndFileListener(Apk info, File apkFile) {
-                if (!apkFile.exists()) {
-                    listener.onResourceLoaded(null, info);
-                    return;
-                }
-                if (TextUtils.isEmpty(info.getPkgName())) {
-                    LogUtils.debug("empty package update");
-                    info.setPkgName(ResourceUtils.updateApkPackage(context, apkFile));
-                }
-                if (TextUtils.isEmpty(info.getPkgName())) {
-                    listener.onResourceLoaded(null, info);
-                    return;
-                }
-                try {
-                    AssetManager assetManager = AssetManager.class.newInstance();
-                    ReflectUtils.invokeMethod(assetManager, "addAssetPath",
-                            new Class[]{String.class}, new Object[]{apkFile.getAbsolutePath()});
-                    ResourceFetcher fetcher = new ResourceFetcher(info.getPkgName(), new Resources(assetManager, mMetrics, mConfiguration));
-                    mCache.onNewResource(info, fetcher);
-                    listener.onResourceLoaded(fetcher, info);
-                } catch (Throwable throwable) {
-                    LogUtils.exception(throwable);
-                    listener.onResourceLoaded(null, info);
-                }
-            }
-        });
+                    @Override
+                    public void onApkInfoAndFile(Apk info, File apkFile) {
+                        if (!apkFile.exists()) {
+                            listener.onResourceLoaded(null, info);
+                            return;
+                        }
+                        if (TextUtils.isEmpty(info.getPkgName())) {
+                            LogUtils.debug(ResourceManager.this, "empty package update");
+                            info.setPkgName(ResourceUtils.updateApkPackage(context, apkFile));
+                        }
+                        if (TextUtils.isEmpty(info.getPkgName())) {
+                            listener.onResourceLoaded(null, info);
+                            return;
+                        }
+                        try {
+                            AssetManager assetManager = AssetManager.class.newInstance();
+                            ReflectUtils.invokeMethod(assetManager, "addAssetPath",
+                                    new Class[]{String.class}, new Object[]{apkFile.getAbsolutePath()});
+                            ResourceFetcher fetcher = new ResourceFetcher(info.getPkgName(), new Resources(assetManager, mMetrics, mConfiguration));
+                            mCache.onNewResource(info, fetcher);
+                            listener.onResourceLoaded(fetcher, info);
+                        } catch (Throwable throwable) {
+                            LogUtils.exception(ResourceManager.this, throwable);
+                            listener.onResourceLoaded(null, info);
+                        }
+                    }
+                });
     }
 
     public void setVerifier(IApkVerifier mVerifier) {

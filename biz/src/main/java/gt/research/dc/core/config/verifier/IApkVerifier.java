@@ -1,4 +1,4 @@
-package gt.research.dc.core.command.verifier;
+package gt.research.dc.core.config.verifier;
 
 import android.content.Context;
 

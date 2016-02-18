@@ -50,7 +50,7 @@ public class FileUtils {
                 return false;
             }
         } catch (IOException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(FileUtils.class.getSimpleName(), e);
             return false;
         }
         FileInputStream srcStream = null;
@@ -67,7 +67,7 @@ public class FileUtils {
             dstStream.close();
             srcStream.close();
         } catch (IOException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(FileUtils.class.getSimpleName(), e);
             return false;
         } finally {
             closeStream(dstStream);
@@ -90,7 +90,7 @@ public class FileUtils {
     }
 
     public static File getCacheApkFile(Context context, Apk info) {
-        return getCacheApkFile(context, info.getId());
+        return getCacheApkFile(context, info.getApk());
     }
 
     public static File getCacheApkFile(Context context, String id) {

@@ -1,4 +1,4 @@
-package gt.research.dc.core.command.verifier;
+package gt.research.dc.core.config.verifier;
 
 /**
  * Created by ayi.zty on 2016/2/1.

@@ -7,9 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Arrays;
 
-import gt.research.dc.core.db.Apk;
-import gt.research.dc.data.Config;
-
 /**
  * Created by ayi.zty on 2016/1/29.
  */
@@ -17,7 +14,7 @@ public class JsonGenerator {
     public static void main(String[] args) throws Exception {
         Config config = new Config();
         Apk apkInfo = new Apk();
-        apkInfo.setId("IVersion");
+        apkInfo.setApk("IVersion");
         apkInfo.setUrl("https://os.alipayobjects.com/rmsportal/PvAXMBnwAkomkee.apk");
         apkInfo.setTimestamp(System.currentTimeMillis());
         config.update = Arrays.asList(apkInfo);

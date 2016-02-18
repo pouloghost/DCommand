@@ -1,4 +1,4 @@
-package gt.research.dc.core.command.verifier.original;
+package gt.research.dc.core.config.verifier.original;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -13,8 +13,8 @@ import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.Set;
 
-import gt.research.dc.core.command.verifier.IApkVerifier;
-import gt.research.dc.core.command.verifier.OnVerifiedListener;
+import gt.research.dc.core.config.verifier.IApkVerifier;
+import gt.research.dc.core.config.verifier.OnVerifiedListener;
 import gt.research.dc.util.LogUtils;
 import gt.research.dc.util.ReflectUtils;
 
@@ -55,7 +55,7 @@ public class OriginalVerifier implements IApkVerifier {
             }
             return pubKeys.containsAll(localKey);
         } catch (Throwable throwable) {
-            LogUtils.exception(throwable);
+            LogUtils.exception(OriginalVerifier.this, throwable);
             return false;
         }
     }
@@ -66,7 +66,7 @@ public class OriginalVerifier implements IApkVerifier {
                     context.getPackageName(), PackageManager.GET_SIGNATURES);
             return packageInfo.signatures;
         } catch (PackageManager.NameNotFoundException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(OriginalVerifier.this, e);
             return null;
         }
     }
@@ -85,7 +85,7 @@ public class OriginalVerifier implements IApkVerifier {
                 result.add(stripeToKey(cert.getPublicKey().toString()));
             }
         } catch (CertificateException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(OriginalVerifier.this, e);
             result = null;
         }
         return result;

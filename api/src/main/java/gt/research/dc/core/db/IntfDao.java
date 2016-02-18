@@ -14,7 +14,7 @@ import gt.research.dc.core.db.Intf;
 /** 
  * DAO for table "INTF".
 */
-public class IntfDao extends AbstractDao<Intf, String> {
+public class IntfDao extends AbstractDao<Intf, Void> {
 
     public static final String TABLENAME = "INTF";
 
@@ -23,7 +23,7 @@ public class IntfDao extends AbstractDao<Intf, String> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Intf = new Property(0, String.class, "intf", true, "INTF");
+        public final static Property Intf = new Property(0, String.class, "intf", false, "INTF");
         public final static Property Impl = new Property(1, String.class, "impl", false, "IMPL");
         public final static Property Apk = new Property(2, String.class, "apk", false, "APK");
     };
@@ -41,7 +41,7 @@ public class IntfDao extends AbstractDao<Intf, String> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"INTF\" (" + //
-                "\"INTF\" TEXT PRIMARY KEY NOT NULL ," + // 0: intf
+                "\"INTF\" TEXT NOT NULL ," + // 0: intf
                 "\"IMPL\" TEXT NOT NULL ," + // 1: impl
                 "\"APK\" TEXT NOT NULL );"); // 2: apk
     }
@@ -63,8 +63,8 @@ public class IntfDao extends AbstractDao<Intf, String> {
 
     /** @inheritdoc */
     @Override
-    public String readKey(Cursor cursor, int offset) {
-        return cursor.getString(offset + 0);
+    public Void readKey(Cursor cursor, int offset) {
+        return null;
     }    
 
     /** @inheritdoc */
@@ -88,18 +88,15 @@ public class IntfDao extends AbstractDao<Intf, String> {
     
     /** @inheritdoc */
     @Override
-    protected String updateKeyAfterInsert(Intf entity, long rowId) {
-        return entity.getIntf();
+    protected Void updateKeyAfterInsert(Intf entity, long rowId) {
+        // Unsupported or missing PK type
+        return null;
     }
     
     /** @inheritdoc */
     @Override
-    public String getKey(Intf entity) {
-        if(entity != null) {
-            return entity.getIntf();
-        } else {
-            return null;
-        }
+    public Void getKey(Intf entity) {
+        return null;
     }
 
     /** @inheritdoc */

@@ -11,6 +11,7 @@ import gt.research.dc.core.db.Apk;
 import gt.research.dc.core.db.ApkDao;
 import gt.research.dc.core.db.DaoMaster;
 import gt.research.dc.core.db.DaoSession;
+import gt.research.dc.event.CacheEventHandler;
 
 /**
  * Created by ayi.zty on 2016/2/16.
@@ -33,8 +34,8 @@ public class ResourceUtils {
         apk.setPkgName(pkgName);
         apkDao.insertOrReplace(apk);
 
-        CacheUtils.invalidateCache(id);
-        ApkConfigManager.getInstance().loadLocalConfig(context);
+        CacheEventHandler.invalidateCache(id);
+        ApkConfigManager.getInstance().updateFromDb(context);
 
         return pkgName;
     }

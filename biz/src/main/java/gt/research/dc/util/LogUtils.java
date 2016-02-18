@@ -6,16 +6,26 @@ import android.util.Log;
  * Created by ayi.zty on 2016/1/26.
  */
 public class LogUtils {
-    public static void debug(String msg) {
-        Log.e("GT", msg);
+    public static void debug(Object me, String msg) {
+        if (null == me) {
+            Log.e("GT", msg);
+            return;
+        }
+        String suffix = me.getClass().getSimpleName();
+        if (me instanceof String) {
+            suffix = (String) me;
+        }
+        Log.e("GT-" + suffix, msg);
     }
 
-    public static void exception(Throwable e) {
-        Log.e("GT", "", e);
-    }
-
-    private static String getCurrentClassSimpleName() {
-        String fullName = new Exception().getStackTrace()[0].getClassName();
-        return fullName.substring(fullName.lastIndexOf("."));
+    public static void exception(Object me, Throwable e) {
+        if (null == me) {
+            Log.e("GT", "", e);
+        }
+        String suffix = me.getClass().getSimpleName();
+        if (me instanceof String) {
+            suffix = (String) me;
+        }
+        Log.e("GT-" + suffix, "", e);
     }
 }

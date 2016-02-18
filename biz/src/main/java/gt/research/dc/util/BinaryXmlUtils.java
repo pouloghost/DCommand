@@ -12,7 +12,6 @@ import java.util.zip.ZipFile;
  * Created by ayi.zty on 2016/2/16.
  */
 public class BinaryXmlUtils {
-
     private static final int sEndDocTag = 0x00100101;
     private static final int sStartTag = 0x00100102;
     private static final int sEndTag = 0x00100103;
@@ -35,14 +34,14 @@ public class BinaryXmlUtils {
             }
             return decompressXML(outputStream.toByteArray());
         } catch (IOException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(BinaryXmlUtils.class.getSimpleName(), e);
 
         } finally {
             if (null != inputStream) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    LogUtils.exception(e);
+                    LogUtils.exception(BinaryXmlUtils.class.getSimpleName(), e);
                 }
             }
         }
@@ -54,7 +53,7 @@ public class BinaryXmlUtils {
         Matcher matcher = reg.matcher(manifest);
 
         if (matcher.find()) {
-            LogUtils.debug("count " + matcher.groupCount());
+            LogUtils.debug(BinaryXmlUtils.class.getSimpleName(), "count " + matcher.groupCount());
             if (1 == matcher.groupCount()) {
                 return matcher.group(1);
             }
@@ -160,7 +159,7 @@ public class BinaryXmlUtils {
                 case sEndDocTag:
                     return resultXml.toString();
                 default:
-                    LogUtils.debug("  Unrecognized tag code '" + Integer.toHexString(tag)
+                    LogUtils.debug(BinaryXmlUtils.class.getSimpleName(), "Unrecognized tag code '" + Integer.toHexString(tag)
                             + "' at offset " + off);
                     return resultXml.toString();
             }
