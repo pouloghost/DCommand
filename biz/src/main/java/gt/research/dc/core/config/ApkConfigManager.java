@@ -241,7 +241,7 @@ public class ApkConfigManager {
                 }
 
                 CacheEventHandler.invalidateCache(info.getApk());
-                NewApkEventHandler.onNewApk(info, apkFile);
+                NewApkEventHandler.onNewApk(context, info, apkFile);
 
                 notifyLoadApkInfoAndFileListener(loadListener, info, apkFile);
             }

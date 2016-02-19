@@ -1,26 +1,161 @@
-package gt.research.dc.util;
+package gt.research.dc.core.common.manifest;
+
+import android.support.v4.util.ArrayMap;
+import android.text.TextUtils;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import gt.research.dc.core.db.Comp;
+import gt.research.dc.util.FileUtils;
+import gt.research.dc.util.LogUtils;
+
 /**
- * Created by ayi.zty on 2016/2/16.
+ * Created by ayi.zty on 2016/2/19.
  */
-public class BinaryXmlUtils {
+public final class Manifest {
     private static final int sEndDocTag = 0x00100101;
     private static final int sStartTag = 0x00100102;
     private static final int sEndTag = 0x00100103;
     private static final byte sTypeInt = 0x10;
     private static final byte sTypeString = 0x03;
-
     private static final String sManifestName = "AndroidManifest.xml";
 
-    public static String readManifest(String path) {
+    private static final String sTagManifest = "manifest";
+    private static final String sTagApplication = "application";
+    private static final String sTagActivity = "activity";
+    private static final String sTagMeta = "meta-data";
+    private static final String sAttrPackage = "package";
+    private static final String sAttrName = "name";
+    private static final String sAttrValue = "value";
+
+    private String mPackage;
+    private Map<String, String> mMetas;
+    private List<Comp> mComponents;
+    private String mApkId;
+
+    private Manifest() {
+    }
+
+    public static Manifest fromFile(String path) {
+        Manifest manifest = new Manifest();
+        manifest.parseManifest(readManifest(path));
+        manifest.mApkId = FileUtils.pathToId(path);
+        return manifest;
+    }
+
+    public static Manifest fromXml(String apk, String xml) {
+        Manifest manifest = new Manifest();
+        manifest.parseManifest(xml);
+        manifest.mApkId = apk;
+        return manifest;
+    }
+
+    public String getPackage() {
+        return mPackage;
+    }
+
+    public List<Comp> getComponents() {
+        return mComponents;
+    }
+
+    public Map<String, String> getMetas() {
+        return mMetas;
+    }
+
+    private void parseManifest(String manifest) {
+        LogUtils.debug(this, "parse manifest " + manifest);
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XmlPullParser parser = factory.newPullParser();
+            parser.setInput(new StringReader(manifest));
+            clearFields();
+
+            int eventType = parser.next();
+            while (XmlPullParser.END_DOCUMENT != eventType) {
+                switch (eventType) {
+                    case XmlPullParser.START_TAG:
+                        switch (parser.getName()) {
+                            case sTagManifest:
+                                mPackage = readAttrValue(parser, sAttrPackage);
+                                LogUtils.debug(this, "package " + mPackage);
+                                break;
+                            case sTagMeta:
+                                String name = readAttrValue(parser, sAttrName);
+                                String value = readAttrValue(parser, sAttrValue);
+                                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(value)) {
+                                    break;
+                                }
+                                mMetas.put(name, value);
+                                LogUtils.debug(this, "meta " + name + " : " + value);
+                                break;
+                            case sTagActivity:
+                                Comp comp = getComp(parser);
+                                if (null != comp) {
+                                    mComponents.add(comp);
+                                }
+                                break;
+                            case sTagApplication:
+                                break;
+                        }
+                }
+                eventType = parser.next();
+            }
+        } catch (XmlPullParserException | IOException e) {
+            LogUtils.exception(Manifest.this, e);
+        }
+    }
+
+
+    private Comp getComp(XmlPullParser parser) {
+        if (TextUtils.isEmpty(mPackage)) {
+            return null;
+        }
+        Comp comp = new Comp();
+        comp.setApk(mApkId);
+        comp.setType(parser.getName());
+        String name = readAttrValue(parser, sAttrName);
+        if (TextUtils.isEmpty(name)) {
+            return null;
+        }
+        if (name.startsWith(".")) {
+            comp.setComp(mPackage + name);
+        } else {
+            comp.setComp(name);
+        }
+        LogUtils.debug(this, "new component " + comp.getComp());
+        return comp;
+    }
+
+    private String readAttrValue(XmlPullParser parser, String name) {
+        final int count = parser.getAttributeCount();
+        for (int i = 0; i < count; ++i) {
+            if (TextUtils.equals(parser.getAttributeName(i), name)) {
+                return parser.getAttributeValue(i);
+            }
+        }
+        return null;
+    }
+
+    private void clearFields() {
+        mComponents = new ArrayList<>();
+        mMetas = new ArrayMap<>();
+        mPackage = null;
+    }
+
+    private static String readManifest(String path) {
         InputStream inputStream = null;
         try {
             ZipFile file = new ZipFile(path);
@@ -34,34 +169,20 @@ public class BinaryXmlUtils {
             }
             return decompressXML(outputStream.toByteArray());
         } catch (IOException e) {
-            LogUtils.exception(BinaryXmlUtils.class.getSimpleName(), e);
-
+            LogUtils.exception(Manifest.class.getSimpleName(), e);
         } finally {
             if (null != inputStream) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    LogUtils.exception(BinaryXmlUtils.class.getSimpleName(), e);
+                    LogUtils.exception(Manifest.class.getSimpleName(), e);
                 }
             }
         }
         return null;
     }
 
-    public static String readPackage(String manifest) {
-        Pattern reg = Pattern.compile("package=\"(.*?)\"");
-        Matcher matcher = reg.matcher(manifest);
-
-        if (matcher.find()) {
-            LogUtils.debug(BinaryXmlUtils.class.getSimpleName(), "count " + matcher.groupCount());
-            if (1 == matcher.groupCount()) {
-                return matcher.group(1);
-            }
-        }
-        return null;
-    }
-
-    public static String decompressXML(byte[] xml) {
+    private static String decompressXML(byte[] xml) {
         /*
             <manifest versionCode="1"
 
@@ -159,7 +280,7 @@ public class BinaryXmlUtils {
                 case sEndDocTag:
                     return resultXml.toString();
                 default:
-                    LogUtils.debug(BinaryXmlUtils.class.getSimpleName(), "Unrecognized tag code '" + Integer.toHexString(tag)
+                    LogUtils.debug(Manifest.class.getSimpleName(), "  Unrecognized tag code '" + Integer.toHexString(tag)
                             + "' at offset " + off);
                     return resultXml.toString();
             }

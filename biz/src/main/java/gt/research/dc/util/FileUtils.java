@@ -79,6 +79,15 @@ public class FileUtils {
 
     public static String fileToId(File apkFile) {
         String name = apkFile.getName();
+        return nameToId(name);
+    }
+
+    public static String pathToId(String path) {
+        String name = path.substring(path.lastIndexOf(File.separator));
+        return nameToId(name);
+    }
+
+    private static String nameToId(String name) {
         return name.substring(0, name.indexOf(FileConstants.SUFFIX_APK));
     }
 

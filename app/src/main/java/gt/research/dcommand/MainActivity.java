@@ -143,6 +143,23 @@ public class MainActivity extends AppCompatActivity {
                 new Runnable() {
                     @Override
                     public void run() {
+                        Resources res = getResources();
+                        ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration()).
+                                loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
+                                    @Override
+                                    public void onResourceLoaded(ResourceFetcher fetcher, Apk info) {
+                                        if (null == fetcher) {
+                                            return;
+                                        }
+                                        mVersion.setText(fetcher.getString("test"));
+                                        mImage.setImageDrawable(fetcher.getDrawable("test"));
+                                    }
+                                });
+                    }
+                },
+                new Runnable() {
+                    @Override
+                    public void run() {
                         //load resource
                         Resources res = getResources();
                         ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
