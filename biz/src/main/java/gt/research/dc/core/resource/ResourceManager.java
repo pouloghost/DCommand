@@ -76,7 +76,7 @@ public class ResourceManager implements IOnNewApkListener {
                         if (!fetcher.isUsable()) {
                             fetcher = null;
                         }
-                        mCache.onNewResource(info, fetcher);
+                        mCache.onResourceLoaded(fetcher, info);
                         listener.onResourceLoaded(fetcher, info);
                     }
                 });

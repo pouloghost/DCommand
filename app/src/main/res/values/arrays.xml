@@ -6,5 +6,6 @@
     <string-array name="actions">
         <item>update config</item>
         <item>load resource</item>
+        <item>load classloader</item>
     </string-array>
 </resources>

@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import java.io.File;
 
+import gt.research.dc.core.IVersion;
+import gt.research.dc.core.classloader.ClassFetcher;
+import gt.research.dc.core.classloader.ClassManager;
 import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
 import gt.research.dc.core.db.Apk;
@@ -126,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 new Runnable() {
                     @Override
                     public void run() {
+                        //load file
                         ApkConfigManager.getInstance().getApkInfoAndFileById(MainActivity.this, "IVersion", false,
                                 new ApkConfigManager.LoadApkInfoAndFileListener() {
                                     @Override
@@ -143,12 +147,14 @@ public class MainActivity extends AppCompatActivity {
                 new Runnable() {
                     @Override
                     public void run() {
+                        //load resource
                         Resources res = getResources();
                         ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration()).
                                 loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
                                     @Override
                                     public void onResourceLoaded(ResourceFetcher fetcher, Apk info) {
                                         if (null == fetcher) {
+                                            mVersion.setText("error");
                                             return;
                                         }
                                         mVersion.setText(fetcher.getString("test"));
@@ -160,20 +166,25 @@ public class MainActivity extends AppCompatActivity {
                 new Runnable() {
                     @Override
                     public void run() {
-                        //load resource
-                        Resources res = getResources();
-                        ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
-                        resourceManager.loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
-                            @Override
-                            public void onResourceLoaded(ResourceFetcher fetcher, Apk info) {
-                                if (null == fetcher) {
-                                    mVersion.setText("error");
-                                    return;
-                                }
-                                mVersion.setText(fetcher.getString("test"));
-                                mImage.setImageDrawable(fetcher.getDrawable("test"));
-                            }
-                        });
+                        //load classloader
+                        ClassManager.getInstance().loadClass(MainActivity.this, "IVersion", false,
+                                new ClassManager.LoadClassListener() {
+                                    @Override
+                                    public void onClassLoaded(ClassFetcher fetcher, Apk info) {
+                                        if (null == fetcher) {
+                                            mVersion.setText("error");
+                                            return;
+                                        }
+                                        try {
+                                            Class clazz = fetcher.getClass("gt.research.export.VersionImpl");
+                                            IVersion version = (IVersion) clazz.newInstance();
+                                            mVersion.setText(version.getVersion());
+                                        } catch (InstantiationException | IllegalAccessException e) {
+                                            mVersion.setText("error");
+                                            LogUtils.exception(MainActivity.this, e);
+                                        }
+                                    }
+                                });
                     }
                 }
         };
