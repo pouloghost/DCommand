@@ -4,7 +4,7 @@ import android.content.Context;
 
 import java.io.File;
 
-import gt.research.dc.core.command.CommandManager;
+import gt.research.dc.core.classloader.command.CommandManager;
 import gt.research.dc.core.common.manifest.Manifest;
 import gt.research.dc.core.db.Apk;
 import gt.research.dc.core.resource.ResourceManager;

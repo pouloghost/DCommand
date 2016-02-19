@@ -3,7 +3,7 @@ package gt.research.dc.event;
 import android.content.Context;
 
 import gt.research.dc.core.classloader.ClassManager;
-import gt.research.dc.core.command.CommandManager;
+import gt.research.dc.core.classloader.command.CommandManager;
 import gt.research.dc.core.resource.ResourceManager;
 
 /**

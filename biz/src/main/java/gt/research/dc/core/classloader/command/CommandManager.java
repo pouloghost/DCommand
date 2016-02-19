@@ -1,4 +1,4 @@
-package gt.research.dc.core.command;
+package gt.research.dc.core.classloader.command;
 
 import android.content.Context;
 import android.support.v4.util.ArrayMap;

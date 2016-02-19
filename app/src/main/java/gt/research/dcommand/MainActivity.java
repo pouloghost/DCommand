@@ -14,7 +14,7 @@ import java.io.File;
 import gt.research.dc.core.IVersion;
 import gt.research.dc.core.classloader.ClassFetcher;
 import gt.research.dc.core.classloader.ClassManager;
-import gt.research.dc.core.command.CommandManager;
+import gt.research.dc.core.classloader.command.CommandManager;
 import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
 import gt.research.dc.core.db.Apk;
