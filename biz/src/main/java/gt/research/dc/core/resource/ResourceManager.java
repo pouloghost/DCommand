@@ -1,9 +1,7 @@
 package gt.research.dc.core.resource;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
@@ -17,7 +15,6 @@ import gt.research.dc.core.db.ApkDao;
 import gt.research.dc.core.db.DbManager;
 import gt.research.dc.event.IOnNewApkListener;
 import gt.research.dc.util.LogUtils;
-import gt.research.dc.util.ReflectUtils;
 
 /**
  * Created by ayi.zty on 2016/2/15.
@@ -75,17 +72,12 @@ public class ResourceManager implements IOnNewApkListener {
                             listener.onResourceLoaded(null, info);
                             return;
                         }
-                        try {
-                            AssetManager assetManager = AssetManager.class.newInstance();
-                            ReflectUtils.invokeMethod(assetManager, "addAssetPath",
-                                    new Class[]{String.class}, new Object[]{apkFile.getAbsolutePath()});
-                            ResourceFetcher fetcher = new ResourceFetcher(info.getPkgName(), new Resources(assetManager, mMetrics, mConfiguration));
-                            mCache.onNewResource(info, fetcher);
-                            listener.onResourceLoaded(fetcher, info);
-                        } catch (Throwable throwable) {
-                            LogUtils.exception(ResourceManager.this, throwable);
-                            listener.onResourceLoaded(null, info);
+                        ResourceFetcher fetcher = new ResourceFetcher(info, apkFile, mMetrics, mConfiguration);
+                        if (!fetcher.isUsable()) {
+                            fetcher = null;
                         }
+                        mCache.onNewResource(info, fetcher);
+                        listener.onResourceLoaded(fetcher, info);
                     }
                 });
     }
