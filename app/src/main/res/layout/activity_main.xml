@@ -10,18 +10,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="gt.research.dcommand.MainActivity">
 
-    <!--<EditText-->
-    <!--android:id="@+id/url"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:inputType="textUri"-->
-    <!--android:text="https://os.alipayobjects.com/rmsportal/BXVvgyMNQzoZSFY.json" />-->
-
     <Spinner
         android:id="@+id/url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/urls" />
+
+    <Spinner
+        android:id="@+id/action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/actions" />
 
     <TextView
         android:id="@+id/version"
@@ -32,7 +31,8 @@
     <ImageView
         android:id="@+id/image"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:id="@+id/call"
@@ -40,11 +40,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="call" />
-
-    <Button
-        android:id="@+id/updateConfig"
-        style="@android:style/TextAppearance.Holo.Widget.Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="update config" />
 </LinearLayout>

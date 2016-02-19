@@ -1,40 +1,37 @@
 package gt.research.dc.core.resource;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 import java.io.File;
 
-import gt.research.dc.core.command.verifier.IApkVerifier;
-import gt.research.dc.core.command.verifier.original.OriginalVerifier;
 import gt.research.dc.core.common.ICache;
+import gt.research.dc.core.common.manifest.Manifest;
 import gt.research.dc.core.config.ApkConfigManager;
-import gt.research.dc.data.ApkInfo;
+import gt.research.dc.core.db.Apk;
+import gt.research.dc.core.db.ApkDao;
+import gt.research.dc.core.db.DbManager;
+import gt.research.dc.event.IOnNewApkListener;
 import gt.research.dc.util.LogUtils;
-import gt.research.dc.util.ReflectUtils;
-import gt.research.dc.util.ResourceUtils;
 
 /**
  * Created by ayi.zty on 2016/2/15.
  */
-public class ResourceManager {
+public class ResourceManager implements IOnNewApkListener {
     private DisplayMetrics mMetrics;
     private Configuration mConfiguration;
 
-    private IApkVerifier mVerifier;
     private ResourceCache mCache;
 
     private volatile static ResourceManager sInstance;
 
     private ResourceManager(DisplayMetrics metrics, Configuration configuration) {
+        LogUtils.debug(this, "new instance");
         mMetrics = metrics;
         mConfiguration = configuration;
 
-        mVerifier = new OriginalVerifier();
         mCache = new ResourceCache();
     }
 
@@ -57,50 +54,52 @@ public class ResourceManager {
         if (!ignoreCache) {
             ResourceCache.Entry entry = mCache.getCachedResource(id);
             if (null != entry) {
+                LogUtils.debug(this, "cached resource");
                 listener.onResourceLoaded(entry.fetcher, entry.info);
                 return;
             }
         }
-        ApkConfigManager.getInstance().getApkInfoAndFileById(context, id, mVerifier,
+        ApkConfigManager.getInstance().getApkInfoAndFileById(context, id, false,
                 new ApkConfigManager.LoadApkInfoAndFileListener() {
-            @Override
-            public void onApkInfoAndFileListener(ApkInfo info, File apkFile) {
-                if (!apkFile.exists()) {
-                    listener.onResourceLoaded(null, info);
-                    return;
-                }
-                if (TextUtils.isEmpty(info.pkgName)) {
-                    LogUtils.debug("empty package update");
-                    info.pkgName = ResourceUtils.updateApkPackage(context, apkFile);
-                }
-                if (TextUtils.isEmpty(info.pkgName)) {
-                    listener.onResourceLoaded(null, info);
-                    return;
-                }
-                try {
-                    AssetManager assetManager = AssetManager.class.newInstance();
-                    ReflectUtils.invokeMethod(assetManager, "addAssetPath",
-                            new Class[]{String.class}, new Object[]{apkFile.getAbsolutePath()});
-                    ResourceFetcher fetcher = new ResourceFetcher(info.pkgName, new Resources(assetManager, mMetrics, mConfiguration));
-                    mCache.onNewResource(info, fetcher);
-                    listener.onResourceLoaded(fetcher, info);
-                } catch (Throwable throwable) {
-                    LogUtils.exception(throwable);
-                    listener.onResourceLoaded(null, info);
-                }
-            }
-        });
-    }
-
-    public void setVerifier(IApkVerifier mVerifier) {
-        this.mVerifier = mVerifier;
+                    @Override
+                    public void onApkInfoAndFile(Apk info, File apkFile) {
+                        if (!apkFile.exists()) {
+                            listener.onResourceLoaded(null, info);
+                            return;
+                        }
+                        if (TextUtils.isEmpty(info.getPkgName())) {
+                            LogUtils.debug(ResourceManager.this, "empty package");
+                            listener.onResourceLoaded(null, info);
+                            return;
+                        }
+                        ResourceFetcher fetcher = new ResourceFetcher(info, apkFile, mMetrics, mConfiguration);
+                        if (!fetcher.isUsable()) {
+                            fetcher = null;
+                        }
+                        mCache.onResourceLoaded(fetcher, info);
+                        listener.onResourceLoaded(fetcher, info);
+                    }
+                });
     }
 
     public ICache getCache() {
         return mCache;
     }
 
+    @Override
+    public void onNewApk(Context context, Apk info, File apkFile, Manifest manifest) {
+        LogUtils.debug(this, "new apk " + info.getApk());
+        ApkDao apkDao = DbManager.getInstance(context).getDao(Apk.class);
+        if (null == apkDao) {
+            return;
+        }
+        apkDao.delete(info);
+        info.setPkgName(manifest.getPackage());
+        apkDao.insert(info);
+        LogUtils.debug(this, "update db " + info.getApk() + " : " + info.getPkgName());
+    }
+
     public interface LoadResourceListener {
-        void onResourceLoaded(ResourceFetcher fetcher, ApkInfo info);
+        void onResourceLoaded(ResourceFetcher fetcher, Apk info);
     }
 }

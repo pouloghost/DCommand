@@ -14,7 +14,7 @@ import gt.research.dc.core.db.Comp;
 /** 
  * DAO for table "COMP".
 */
-public class CompDao extends AbstractDao<Comp, String> {
+public class CompDao extends AbstractDao<Comp, Void> {
 
     public static final String TABLENAME = "COMP";
 
@@ -23,7 +23,7 @@ public class CompDao extends AbstractDao<Comp, String> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Comp = new Property(0, String.class, "comp", true, "COMP");
+        public final static Property Comp = new Property(0, String.class, "comp", false, "COMP");
         public final static Property Apk = new Property(1, String.class, "apk", false, "APK");
         public final static Property Type = new Property(2, String.class, "type", false, "TYPE");
     };
@@ -41,7 +41,7 @@ public class CompDao extends AbstractDao<Comp, String> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"COMP\" (" + //
-                "\"COMP\" TEXT PRIMARY KEY NOT NULL ," + // 0: comp
+                "\"COMP\" TEXT NOT NULL ," + // 0: comp
                 "\"APK\" TEXT NOT NULL ," + // 1: apk
                 "\"TYPE\" TEXT NOT NULL );"); // 2: type
     }
@@ -63,8 +63,8 @@ public class CompDao extends AbstractDao<Comp, String> {
 
     /** @inheritdoc */
     @Override
-    public String readKey(Cursor cursor, int offset) {
-        return cursor.getString(offset + 0);
+    public Void readKey(Cursor cursor, int offset) {
+        return null;
     }    
 
     /** @inheritdoc */
@@ -88,18 +88,15 @@ public class CompDao extends AbstractDao<Comp, String> {
     
     /** @inheritdoc */
     @Override
-    protected String updateKeyAfterInsert(Comp entity, long rowId) {
-        return entity.getComp();
+    protected Void updateKeyAfterInsert(Comp entity, long rowId) {
+        // Unsupported or missing PK type
+        return null;
     }
     
     /** @inheritdoc */
     @Override
-    public String getKey(Comp entity) {
-        if(entity != null) {
-            return entity.getComp();
-        } else {
-            return null;
-        }
+    public Void getKey(Comp entity) {
+        return null;
     }
 
     /** @inheritdoc */

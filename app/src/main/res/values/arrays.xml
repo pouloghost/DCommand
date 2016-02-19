@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="urls">
-        <item>https://os.alipayobjects.com/rmsportal/xrzeTpZUwaONAJq.json</item>
+        <item>https://os.alipayobjects.com/rmsportal/oKLPUORyUIzTUhw.json</item>
+    </string-array>
+    <string-array name="actions">
+        <item>update config</item>
+        <item>load resource</item>
+        <item>load classloader</item>
+        <item>load command</item>
     </string-array>
 </resources>

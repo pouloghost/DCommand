@@ -1,7 +1,5 @@
 package gt.research.dc.core;
 
-import gt.research.dc.data.CommandContext;
-
 /**
  * Created by ayi.zty on 2016/1/26.
  */

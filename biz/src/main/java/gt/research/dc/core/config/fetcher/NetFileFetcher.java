@@ -21,23 +21,23 @@ public class NetFileFetcher implements IConfigFetcher {
 
     @Override
     public void fetch(Context context, final OnConfigFetchedListener listener) {
-        LogUtils.debug(mUrl);
+        LogUtils.debug(this, mUrl);
         NetUtils.download(context, mUrl,
                 new NetUtils.DownloadListener() {
                     @Override
                     public void onEnqueue(String url) {
-                        LogUtils.debug("enqueue");
+                        LogUtils.debug(NetFileFetcher.this, "enqueue");
                     }
 
                     @Override
                     public void onFinish(String url, String file) {
-                        LogUtils.debug("finish");
+                        LogUtils.debug(NetFileFetcher.this, "finish");
                         onFileGot(file);
                     }
 
                     @Override
                     public void onCached(String url, String file) {
-                        LogUtils.debug("cached");
+                        LogUtils.debug(NetFileFetcher.this, "cached");
                         onFileGot(file);
                     }
 
@@ -51,7 +51,7 @@ public class NetFileFetcher implements IConfigFetcher {
                             listener.onConfigFetched(null);
                             return;
                         }
-                        LogUtils.debug(file);
+                        LogUtils.debug(NetFileFetcher.this, file);
                         File config = new File(file);
                         if (!config.exists()) {
                             listener.onConfigFetched(null);
@@ -75,7 +75,7 @@ public class NetFileFetcher implements IConfigFetcher {
             String json = reader.readLine();
             return JSON.parseObject(json, Config.class);
         } catch (IOException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(NetFileFetcher.this, e);
             return null;
         }
     }

@@ -23,7 +23,7 @@ public class ApkDao extends AbstractDao<Apk, String> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, String.class, "id", true, "ID");
+        public final static Property Apk = new Property(0, String.class, "apk", true, "APK");
         public final static Property Url = new Property(1, String.class, "url", false, "URL");
         public final static Property PkgName = new Property(2, String.class, "pkgName", false, "PKG_NAME");
         public final static Property Timestamp = new Property(3, long.class, "timestamp", false, "TIMESTAMP");
@@ -42,7 +42,7 @@ public class ApkDao extends AbstractDao<Apk, String> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"APK\" (" + //
-                "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: id
+                "\"APK\" TEXT PRIMARY KEY NOT NULL ," + // 0: apk
                 "\"URL\" TEXT NOT NULL ," + // 1: url
                 "\"PKG_NAME\" TEXT," + // 2: pkgName
                 "\"TIMESTAMP\" INTEGER NOT NULL );"); // 3: timestamp
@@ -58,7 +58,7 @@ public class ApkDao extends AbstractDao<Apk, String> {
     @Override
     protected void bindValues(SQLiteStatement stmt, Apk entity) {
         stmt.clearBindings();
-        stmt.bindString(1, entity.getId());
+        stmt.bindString(1, entity.getApk());
         stmt.bindString(2, entity.getUrl());
  
         String pkgName = entity.getPkgName();
@@ -78,7 +78,7 @@ public class ApkDao extends AbstractDao<Apk, String> {
     @Override
     public Apk readEntity(Cursor cursor, int offset) {
         Apk entity = new Apk( //
-            cursor.getString(offset + 0), // id
+            cursor.getString(offset + 0), // apk
             cursor.getString(offset + 1), // url
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // pkgName
             cursor.getLong(offset + 3) // timestamp
@@ -89,7 +89,7 @@ public class ApkDao extends AbstractDao<Apk, String> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, Apk entity, int offset) {
-        entity.setId(cursor.getString(offset + 0));
+        entity.setApk(cursor.getString(offset + 0));
         entity.setUrl(cursor.getString(offset + 1));
         entity.setPkgName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setTimestamp(cursor.getLong(offset + 3));
@@ -98,14 +98,14 @@ public class ApkDao extends AbstractDao<Apk, String> {
     /** @inheritdoc */
     @Override
     protected String updateKeyAfterInsert(Apk entity, long rowId) {
-        return entity.getId();
+        return entity.getApk();
     }
     
     /** @inheritdoc */
     @Override
     public String getKey(Apk entity) {
         if(entity != null) {
-            return entity.getId();
+            return entity.getApk();
         } else {
             return null;
         }

@@ -7,7 +7,7 @@ package gt.research.dc.core.db;
 public class Apk {
 
     /** Not-null value. */
-    private String id;
+    private String apk;
     /** Not-null value. */
     private String url;
     private String pkgName;
@@ -16,25 +16,25 @@ public class Apk {
     public Apk() {
     }
 
-    public Apk(String id) {
-        this.id = id;
+    public Apk(String apk) {
+        this.apk = apk;
     }
 
-    public Apk(String id, String url, String pkgName, long timestamp) {
-        this.id = id;
+    public Apk(String apk, String url, String pkgName, long timestamp) {
+        this.apk = apk;
         this.url = url;
         this.pkgName = pkgName;
         this.timestamp = timestamp;
     }
 
     /** Not-null value. */
-    public String getId() {
-        return id;
+    public String getApk() {
+        return apk;
     }
 
     /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setId(String id) {
-        this.id = id;
+    public void setApk(String apk) {
+        this.apk = apk;
     }
 
     /** Not-null value. */

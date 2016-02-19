@@ -10,7 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import gt.research.dc.core.constant.FileConstants;
-import gt.research.dc.data.ApkInfo;
+import gt.research.dc.core.db.Apk;
 
 /**
  * Created by ayi.zty on 2016/1/25.
@@ -50,7 +50,7 @@ public class FileUtils {
                 return false;
             }
         } catch (IOException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(FileUtils.class.getSimpleName(), e);
             return false;
         }
         FileInputStream srcStream = null;
@@ -67,7 +67,7 @@ public class FileUtils {
             dstStream.close();
             srcStream.close();
         } catch (IOException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(FileUtils.class.getSimpleName(), e);
             return false;
         } finally {
             closeStream(dstStream);
@@ -79,6 +79,15 @@ public class FileUtils {
 
     public static String fileToId(File apkFile) {
         String name = apkFile.getName();
+        return nameToId(name);
+    }
+
+    public static String pathToId(String path) {
+        String name = path.substring(path.lastIndexOf(File.separator));
+        return nameToId(name);
+    }
+
+    private static String nameToId(String name) {
         return name.substring(0, name.indexOf(FileConstants.SUFFIX_APK));
     }
 
@@ -89,8 +98,8 @@ public class FileUtils {
         return sCacheDir;
     }
 
-    public static File getCacheApkFile(Context context, ApkInfo info) {
-        return getCacheApkFile(context, info.id);
+    public static File getCacheApkFile(Context context, Apk info) {
+        return getCacheApkFile(context, info.getApk());
     }
 
     public static File getCacheApkFile(Context context, String id) {

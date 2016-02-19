@@ -15,7 +15,7 @@ public class ReflectUtils {
             field.setAccessible(true);
             return field.get(object);
         } catch (IllegalAccessException | NoSuchFieldException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(ReflectUtils.class.getSimpleName(), e);
         }
         return null;
     }
@@ -27,7 +27,7 @@ public class ReflectUtils {
             field.setAccessible(true);
             field.set(object, value);
         } catch (IllegalAccessException | NoSuchFieldException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(ReflectUtils.class.getSimpleName(), e);
         }
     }
 
@@ -37,7 +37,7 @@ public class ReflectUtils {
             field.setAccessible(true);
             field.set(object, value);
         } catch (IllegalAccessException | NoSuchFieldException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(ReflectUtils.class.getSimpleName(), e);
         }
     }
 
@@ -48,7 +48,7 @@ public class ReflectUtils {
             method.setAccessible(true);
             return method.invoke(object);
         } catch (NoSuchMethodException | IllegalAccessException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(ReflectUtils.class.getSimpleName(), e);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -62,7 +62,7 @@ public class ReflectUtils {
             method.setAccessible(true);
             return method.invoke(object, args);
         } catch (NoSuchMethodException | IllegalAccessException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(ReflectUtils.class.getSimpleName(), e);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -76,7 +76,7 @@ public class ReflectUtils {
             method.setAccessible(true);
             return method.invoke(null);
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(ReflectUtils.class.getSimpleName(), e);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -90,7 +90,7 @@ public class ReflectUtils {
             method.setAccessible(true);
             return method.invoke(null, args);
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException e) {
-            LogUtils.exception(e);
+            LogUtils.exception(ReflectUtils.class.getSimpleName(), e);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }

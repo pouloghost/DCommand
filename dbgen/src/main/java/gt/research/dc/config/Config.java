@@ -1,8 +1,6 @@
-package gt.research.dc.data;
+package gt.research.dc.config;
 
 import java.util.List;
-
-import gt.research.dc.core.db.Apk;
 
 /**
  * Created by ayi.zty on 2016/1/29.
