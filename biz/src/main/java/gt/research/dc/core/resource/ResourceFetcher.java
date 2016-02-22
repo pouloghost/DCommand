@@ -70,6 +70,10 @@ public class ResourceFetcher {
         return mResources.getAssets();
     }
 
+    public String getPackage() {
+        return mPackage;
+    }
+
     public boolean isUsable() {
         return mUsable;
     }
