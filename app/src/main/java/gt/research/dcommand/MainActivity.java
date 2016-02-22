@@ -1,6 +1,5 @@
 package gt.research.dcommand;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -149,8 +148,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         //load resource
-                        Resources res = getResources();
-                        ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration()).
+                        ResourceManager.getInstance(MainActivity.this).
                                 loadResource(MainActivity.this, "IVersion", false, new ResourceManager.LoadResourceListener() {
                                     @Override
                                     public void onResourceLoaded(ResourceFetcher fetcher, Apk info) {

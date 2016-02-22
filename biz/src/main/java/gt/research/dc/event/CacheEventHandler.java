@@ -12,7 +12,7 @@ import gt.research.dc.core.resource.ResourceManager;
 public class CacheEventHandler {
     public static void invalidateCache(Context context, String id) {
         ClassManager.getInstance().getCache().invalidate(context, id);
-        ResourceManager resourceManager = ResourceManager.getInstance(null, null);
+        ResourceManager resourceManager = ResourceManager.getInstance(context);
         if (null != resourceManager) {
             resourceManager.getCache().invalidate(context, id);
         }
@@ -21,7 +21,7 @@ public class CacheEventHandler {
 
     public static void invalidateAll(Context context) {
         ClassManager.getInstance().getCache().clear(context);
-        ResourceManager resourceManager = ResourceManager.getInstance(null, null);
+        ResourceManager resourceManager = ResourceManager.getInstance(context);
         if (null != resourceManager) {
             resourceManager.getCache().clear(context);
         }

@@ -2,6 +2,7 @@ package gt.research.dc.core.classloader.command;
 
 import android.content.Context;
 import android.support.v4.util.ArrayMap;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.util.Collection;
@@ -106,7 +107,9 @@ public class CommandManager implements IOnNewApkListener, ICache {
         LogUtils.debug(this, "invalidate apk " + id);
         Collection<Intf> values = mInterfaceMap.values();
         for (Intf intf : values) {
-            mInterfaceMap.remove(getKey(intf));
+            if (TextUtils.equals(intf.getApk(), id)) {
+                mInterfaceMap.remove(getKey(intf));
+            }
         }
         DbManager dbManager = DbManager.getInstance(context);
         IntfDao intfDao = dbManager.getDao(Intf.class);

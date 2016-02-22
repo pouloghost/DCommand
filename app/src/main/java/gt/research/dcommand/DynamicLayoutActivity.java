@@ -1,6 +1,5 @@
 package gt.research.dcommand;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -19,8 +18,7 @@ public class DynamicLayoutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // TODO: 2016/2/16 hack to make the activity's resource contains dynamic resources 
         super.onCreate(savedInstanceState);
-        final Resources res = getResources();
-        ResourceManager resourceManager = ResourceManager.getInstance(res.getDisplayMetrics(), res.getConfiguration());
+        ResourceManager resourceManager = ResourceManager.getInstance(this);
         resourceManager.loadResource(this, "IVersion", true, new ResourceManager.LoadResourceListener() {
             @Override
             public void onResourceLoaded(ResourceFetcher fetcher, Apk info) {

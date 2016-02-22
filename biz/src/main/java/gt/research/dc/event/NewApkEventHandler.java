@@ -20,7 +20,7 @@ public class NewApkEventHandler {
         }
         LogUtils.debug(NewApkEventHandler.class.getSimpleName(), "notify new apk");
         Manifest manifest = Manifest.fromFile(apkFile.getAbsolutePath());
-        IOnNewApkListener listener = ResourceManager.getInstance(null, null);
+        IOnNewApkListener listener = ResourceManager.getInstance(context);
         if (null != listener) {
             listener.onNewApk(context, info, apkFile, manifest);
         }

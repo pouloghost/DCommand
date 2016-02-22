@@ -2,6 +2,7 @@ package gt.research.dc.core.resource;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
@@ -35,11 +36,12 @@ public class ResourceManager implements IOnNewApkListener {
         mCache = new ResourceCache();
     }
 
-    public static ResourceManager getInstance(DisplayMetrics metrics, Configuration configuration) {
-        if (null == sInstance && null != metrics && null != configuration) {
+    public static ResourceManager getInstance(Context context) {
+        if (null == sInstance && null != context) {
             synchronized (ResourceManager.class) {
                 if (null == sInstance) {
-                    sInstance = new ResourceManager(metrics, configuration);
+                    Resources res = context.getResources();
+                    sInstance = new ResourceManager(res.getDisplayMetrics(), res.getConfiguration());
                 }
             }
         }

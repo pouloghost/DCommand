@@ -34,7 +34,8 @@ public final class Manifest {
 
     private static final String sTagManifest = "manifest";
     private static final String sTagApplication = "application";
-    private static final String sTagActivity = "activity";
+    public static final String sTagActivity = "activity";
+
     private static final String sTagMeta = "meta-data";
     private static final String sAttrPackage = "package";
     private static final String sAttrName = "name";
