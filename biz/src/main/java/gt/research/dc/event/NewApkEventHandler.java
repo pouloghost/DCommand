@@ -5,6 +5,7 @@ import android.content.Context;
 import java.io.File;
 
 import gt.research.dc.core.classloader.command.CommandManager;
+import gt.research.dc.core.classloader.component.ComponentManager;
 import gt.research.dc.core.common.manifest.Manifest;
 import gt.research.dc.core.db.Apk;
 import gt.research.dc.core.resource.ResourceManager;
@@ -25,6 +26,8 @@ public class NewApkEventHandler {
             listener.onNewApk(context, info, apkFile, manifest);
         }
         listener = CommandManager.getInstance(context);
+        listener.onNewApk(context, info, apkFile, manifest);
+        listener = ComponentManager.getInstance(context);
         listener.onNewApk(context, info, apkFile, manifest);
     }
 }

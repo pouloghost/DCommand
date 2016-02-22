@@ -14,6 +14,7 @@ import gt.research.dc.core.IVersion;
 import gt.research.dc.core.classloader.ClassFetcher;
 import gt.research.dc.core.classloader.ClassManager;
 import gt.research.dc.core.classloader.command.CommandManager;
+import gt.research.dc.core.classloader.component.ComponentManager;
 import gt.research.dc.core.config.ApkConfigManager;
 import gt.research.dc.core.config.fetcher.NetFileFetcher;
 import gt.research.dc.core.db.Apk;
@@ -201,6 +202,14 @@ public class MainActivity extends AppCompatActivity {
                                         mVersion.setText(command.getVersion());
                                     }
                                 });
+                    }
+                },
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        // start activity
+                        ComponentManager.getInstance(getApplicationContext()).startActivity(MainActivity.this,
+                                "gt.research.export.MainActivity", "IVersion");
                     }
                 }
         };

@@ -1,6 +1,7 @@
 package gt.research.dc.core.classloader.component;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 
@@ -13,6 +14,8 @@ import gt.research.dc.core.classloader.ClassFetcher;
 import gt.research.dc.core.classloader.ClassManager;
 import gt.research.dc.core.common.ICache;
 import gt.research.dc.core.common.manifest.Manifest;
+import gt.research.dc.core.config.ApkConfigManager;
+import gt.research.dc.core.constant.ComponentConstants;
 import gt.research.dc.core.db.Apk;
 import gt.research.dc.core.db.Comp;
 import gt.research.dc.core.db.CompDao;
@@ -43,32 +46,19 @@ public class ComponentManager implements ICache, IOnNewApkListener {
         return sInstance;
     }
 
-    // TODO: 2016/2/22 make a util not a callback
-    public void startActivity(final Context context, final String comp, final String id, boolean ignoreCache,
-                              final StartComponentListener listener) {
-        ClassManager.getInstance().loadClass(context, id, ignoreCache,
-                new ClassManager.LoadClassListener() {
+    public void startActivity(final Context context, final String comp, final String id) {
+        ApkConfigManager.getInstance().getApkInfoAndFileById(context, id, false,
+                new ApkConfigManager.LoadApkInfoAndFileListener() {
                     @Override
-                    public void onClassLoaded(ClassFetcher fetcher, Apk info) {
-                        if (null == fetcher) {
-                            notifyListener(false);
+                    public void onApkInfoAndFile(Apk info, File apkFile) {
+                        if (null == context || TextUtils.isEmpty(comp) || TextUtils.isEmpty(id)) {
                             return;
                         }
-                        //check existence
-                        Comp compInfo = mActivities.get(getKey(id, comp));
-                        if (null == compInfo) {
-                            notifyListener(false);
-                            return;
-                        }
-//                        Class activityClass = fetcher.getClass(comp);
-//                         TODO: 2016/2/19 start activity
-                    }
-
-                    private void notifyListener(boolean success) {
-                        if (null == listener) {
-                            return;
-                        }
-                        listener.onComponentStarted(success);
+                        Intent intent = new Intent();
+                        intent.setClass(context, ProxyActivity.class);
+                        intent.putExtra(ComponentConstants.BUNDLE_APK_ID, id);
+                        intent.putExtra(ComponentConstants.BUNDLE_COMPONENT_NAME, comp);
+                        context.startActivity(intent);
                     }
                 });
     }
@@ -118,6 +108,7 @@ public class ComponentManager implements ICache, IOnNewApkListener {
         dbManager.deleteDataByApkIdInDb(info.getApk(), "APK", compDao);
         List<Comp> comps = manifest.getComponents();
         for (Comp comp : comps) {
+            comp.setApk(info.getApk());
             compDao.insertOrReplace(comp);
         }
         LogUtils.debug(this, "update db " + comps.size());

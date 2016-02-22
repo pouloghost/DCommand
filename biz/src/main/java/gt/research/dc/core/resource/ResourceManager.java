@@ -65,7 +65,7 @@ public class ResourceManager implements IOnNewApkListener {
                 new ApkConfigManager.LoadApkInfoAndFileListener() {
                     @Override
                     public void onApkInfoAndFile(Apk info, File apkFile) {
-                        if (!apkFile.exists()) {
+                        if (null == apkFile || !apkFile.exists()) {
                             listener.onResourceLoaded(null, info);
                             return;
                         }

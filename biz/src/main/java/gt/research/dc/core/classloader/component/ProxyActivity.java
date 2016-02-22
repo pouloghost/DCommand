@@ -1,6 +1,7 @@
 package gt.research.dc.core.classloader.component;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -33,6 +34,8 @@ public class ProxyActivity extends Activity {
     private ClassFetcher mClassFetcher;
     private Apk mApkInfo;
 
+    private ProgressDialog mDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,50 +56,44 @@ public class ProxyActivity extends Activity {
     }
 
     private void loadAndStartDynamicActivity(final String comp, final String apk, final Bundle savedInstanceState) {
+//        mDialog = ProgressDialog.show(ProxyActivity.this, "loading", "");
+        final CountDownLatch countDownLatch = new CountDownLatch(2);
         new Thread() {
             @Override
             public void run() {
-                final CountDownLatch countDownLatch = new CountDownLatch(2);
-                new Thread() {
-                    @Override
-                    public void run() {
-                        ResourceManager.getInstance(ProxyActivity.this).loadResource(ProxyActivity.this,
-                                apk, false, new ResourceManager.LoadResourceListener() {
-                                    @Override
-                                    public void onResourceLoaded(ResourceFetcher fetcher, Apk info) {
-                                        mResourceFetcher = fetcher;
-                                        countDownLatch.countDown();
-                                    }
-                                });
-                    }
-                }.start();
-                new Thread() {
-                    @Override
-                    public void run() {
-                        ClassManager.getInstance().loadClass(ProxyActivity.this,
-                                apk, false, new ClassManager.LoadClassListener() {
-                                    @Override
-                                    public void onClassLoaded(ClassFetcher fetcher, Apk info) {
-                                        mClassFetcher = fetcher;
-                                        mApkInfo = info;
-                                        countDownLatch.countDown();
-                                    }
-                                });
-                    }
-                }.start();
-                try {
-                    countDownLatch.await();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            startDynamicActivity(comp, apk, savedInstanceState);
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    LogUtils.exception(ProxyActivity.this, e);
-                }
+                ResourceManager.getInstance(ProxyActivity.this).loadResource(ProxyActivity.this,
+                        apk, false, new ResourceManager.LoadResourceListener() {
+                            @Override
+                            public void onResourceLoaded(ResourceFetcher fetcher, Apk info) {
+                                LogUtils.debug(ProxyActivity.this, "got resource " + fetcher.toString());
+                                mResourceFetcher = fetcher;
+                                countDownLatch.countDown();
+                            }
+                        });
             }
         }.start();
+        new Thread() {
+            @Override
+            public void run() {
+                ClassManager.getInstance().loadClass(ProxyActivity.this,
+                        apk, false, new ClassManager.LoadClassListener() {
+                            @Override
+                            public void onClassLoaded(ClassFetcher fetcher, Apk info) {
+                                LogUtils.debug(ProxyActivity.this, "got class " + fetcher.toString());
+                                mClassFetcher = fetcher;
+                                mApkInfo = info;
+                                countDownLatch.countDown();
+                            }
+                        });
+            }
+        }.start();
+        try {
+            countDownLatch.await();
+//            mDialog.dismiss();
+            startDynamicActivity(comp, apk, savedInstanceState);
+        } catch (InterruptedException e) {
+            LogUtils.exception(ProxyActivity.this, e);
+        }
     }
 
     private void startDynamicActivity(String comp, String apk, final Bundle savedInstanceState) {
@@ -110,6 +107,7 @@ public class ProxyActivity extends Activity {
                     public void onComponentLoaded(BaseActivity instance, Comp info) {
                         if (null == instance) {
                             LogUtils.debug(ProxyActivity.this, "no instance");
+                            finish();
                             return;
                         }
                         mDynamicActivity = instance;
@@ -121,17 +119,25 @@ public class ProxyActivity extends Activity {
 
     @Override
     public AssetManager getAssets() {
-        return null == mResourceFetcher.getAsset() ? super.getAssets() : mResourceFetcher.getAsset();
+        if (null == mResourceFetcher || null == mResourceFetcher.getAsset()) {
+            new Exception().printStackTrace();
+            return super.getAssets();
+        }
+        return mResourceFetcher.getAsset();
     }
 
     @Override
     public Resources getResources() {
-        return null == mResourceFetcher.getResources() ? super.getResources() : mResourceFetcher.getResources();
+        if (null == mResourceFetcher || null == mResourceFetcher.getResources()) {
+            new Exception().printStackTrace();
+            return super.getResources();
+        }
+        return mResourceFetcher.getResources();
     }
 
     @Override
     public ClassLoader getClassLoader() {
-        return mClassFetcher.getClassLoader();
+        return null == mClassFetcher ? ProxyActivity.class.getClassLoader() : mClassFetcher.getClassLoader();
     }
 
     @Override
@@ -214,6 +220,7 @@ public class ProxyActivity extends Activity {
 
     @Override
     public void onWindowAttributesChanged(WindowManager.LayoutParams params) {
+        LogUtils.debug(this, "on window attributes changed");
         mDynamicActivity.onWindowAttributesChanged(params);
         super.onWindowAttributesChanged(params);
     }
@@ -239,5 +246,9 @@ public class ProxyActivity extends Activity {
     @Override
     public String getPackageName() {
         return mResourceFetcher.getPackage();
+    }
+
+    public Apk getApkInfo() {
+        return mApkInfo;
     }
 }

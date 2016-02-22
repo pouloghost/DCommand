@@ -41,7 +41,7 @@ public class ClassManager {
         if (!ignoreCache) {
             ClassLoaderCache.Entry entry = mCache.getCachedClassLoader(id);
             if (null != entry) {
-                LogUtils.debug(this, "cached resource");
+                LogUtils.debug(this, "cached class");
                 listener.onClassLoaded(entry.fetcher, entry.info);
                 return;
             }

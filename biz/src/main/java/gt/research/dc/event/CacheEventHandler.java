@@ -4,6 +4,7 @@ import android.content.Context;
 
 import gt.research.dc.core.classloader.ClassManager;
 import gt.research.dc.core.classloader.command.CommandManager;
+import gt.research.dc.core.classloader.component.ComponentManager;
 import gt.research.dc.core.resource.ResourceManager;
 
 /**
@@ -17,6 +18,7 @@ public class CacheEventHandler {
             resourceManager.getCache().invalidate(context, id);
         }
         CommandManager.getInstance(context).invalidate(context, id);
+        ComponentManager.getInstance(context).invalidate(context, id);
     }
 
     public static void invalidateAll(Context context) {
@@ -26,5 +28,6 @@ public class CacheEventHandler {
             resourceManager.getCache().clear(context);
         }
         CommandManager.getInstance(context).clear(context);
+        ComponentManager.getInstance(context).clear(context);
     }
 }

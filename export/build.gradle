@@ -30,4 +30,5 @@ dependencies {
     provided fileTree(dir: 'libs', include: ['*.jar'])
     provided 'junit:junit:4.12'
     compile project(':api')
+    compile project(':biz')
 }

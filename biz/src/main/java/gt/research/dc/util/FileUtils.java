@@ -83,7 +83,7 @@ public class FileUtils {
     }
 
     public static String pathToId(String path) {
-        String name = path.substring(path.lastIndexOf(File.separator));
+        String name = path.substring(path.lastIndexOf(File.separator) + 1);
         return nameToId(name);
     }
 
