@@ -11,7 +11,8 @@ import gt.research.dc.core.config.fetcher.NetFileFetcher;
 import gt.research.dc.core.config.fetcher.OnConfigFetchedListener;
 import gt.research.dc.core.config.verifier.IApkVerifier;
 import gt.research.dc.core.config.verifier.OnVerifiedListener;
-import gt.research.dc.core.config.verifier.original.OriginalVerifier;
+import gt.research.dc.core.config.verifier.original.PackageManagerVerifier;
+import gt.research.dc.core.config.verifier.original.ReflectVerifier;
 import gt.research.dc.core.db.Apk;
 import gt.research.dc.core.db.ApkDao;
 import gt.research.dc.core.db.DbManager;
@@ -42,7 +43,7 @@ public class ApkConfigManager {
 
     private ApkConfigManager() {
         LogUtils.debug(this, "new ApkConfigManager");
-        mVerifier = new OriginalVerifier();
+        mVerifier = new PackageManagerVerifier();
         mFetcher = new NetFileFetcher();
     }
 
